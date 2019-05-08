@@ -7,11 +7,9 @@ groups {
 {% call junos.stanza() %}
 EVPN-ESI {
     {% include "common/chassis.j2" %}
-    {% include "common/interfaces.j2" %}
     {% include "custom/interfaces.j2" %}
     {% include "evpn/policy-options.j2" %}
     {% include "common/routing-options.j2" %}
-    {% include "common/protocols.j2" %}
     {% include "evpn/protocols.j2" %}
     {% include "evpn/switch-options.j2" %}
 }

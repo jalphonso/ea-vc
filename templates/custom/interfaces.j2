@@ -1,9 +1,9 @@
-{% call junos.stanza() %}
-interfaces {
+{% extends "common/interfaces.j2" %}
+{% block interfaces %}
+{{ super() }}
     irb {
         unit <*> {
             proxy-macip-advertisement;
         }
     }
-}
-{% endcall %}
+{% endblock %}

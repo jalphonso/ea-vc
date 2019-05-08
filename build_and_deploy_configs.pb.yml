@@ -6,13 +6,13 @@
   roles:
     - Juniper.junos
   tasks:
-  - name: Get Junos Facts
-    juniper_junos_facts:
-      host: "{{ ansible_host }}"
-    register: facts
+#  - name: Get Junos Facts
+#    juniper_junos_facts:
+#      host: "{{ ansible_host }}"
+#    register: facts
 
   - set_fact:
-      config_style: "{{ facts['ansible_facts']['junos']['switch_style'] }}"
+#      config_style: "{{ facts['ansible_facts']['junos']['switch_style'] }}"
       config_path: "configs/{{ inventory_hostname }}.conf"
       template_path: templates/vc.j2
 
@@ -21,19 +21,19 @@
       src: "{{ template_path }}"
       dest: "{{ config_path }}"
 
-  - name: Deploy config to Junos devices
-    juniper_junos_config:
-      host: "{{ ansible_host }}"
-      load: merge
-      src: "{{ config_path }}"
-      dest_dir: output
-      diff: true
-      check: true
-      commit: true
-      port: 830
-      timeout: 60
-    register: config_result
+#  - name: Deploy config to Junos devices
+#    juniper_junos_config:
+#      host: "{{ ansible_host }}"
+#      load: merge
+#      src: "{{ config_path }}"
+#      dest_dir: output
+#      diff: true
+#      check: true
+#      commit: true
+#      port: 830
+#      timeout: 60
+#    register: config_result
 
-  - name: cat diffs_file
-    debug:
-      var: config_result.diff_lines
+#  - name: cat diffs_file
+#    debug:
+#      var: config_result.diff_lines

@@ -1,5 +1,6 @@
 {% call junos.stanza() %}
 interfaces {
+  {% block interfaces %}
   {% for interface in interfaces %}
     {{ interface.name }} {
       {% if interface.description is defined and interface.description %}
@@ -59,5 +60,6 @@ interfaces {
       {% endif %}
     }
   {% endfor %}
+  {% endblock %}
 }
 {% endcall %}
