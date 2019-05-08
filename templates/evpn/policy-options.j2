@@ -1,4 +1,3 @@
-{% call junos.stanza() %}
 policy-options {
     prefix-list LOOPBACK {
         apply-path "interfaces lo0 unit 0 family inet address <*>";
@@ -17,8 +16,8 @@ policy-options {
         term ICL {
             from {
                 protocol direct;
-                {% for interface in interfaces|selectattr('is_icl', 'defined')|selectattr("is_icl") %}
-                route-filter {{ interface.ip_cidr | ipv4('cidr') }} orlonger;
+                {% for interface in interfaces if interface.is_icl is defined and interface.is_icl %}
+                route-filter {{ interface.ip_cidr | ipv4('network/prefix') }} orlonger;
                 {% endfor %}
             }
             then {
@@ -69,4 +68,4 @@ policy-options {
     community UNDERLAY members 65535:9999;
     community OVERLAY members 65535:9998;
 }
-{% endcall %}
+

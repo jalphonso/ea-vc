@@ -6,13 +6,19 @@ Top level jinja2 template to order everything and indent properly via macros
 groups {
 {% call junos.stanza() %}
 EVPN-ESI {
+    {% call junos.stanza() %}
     {% include "common/chassis.j2" %}
     {% include "custom/interfaces.j2" %}
     {% include "evpn/policy-options.j2" %}
     {% include "common/routing-options.j2" %}
     {% include "evpn/protocols.j2" %}
     {% include "evpn/switch-options.j2" %}
+    {% endcall %}
 }
 {% endcall %}
 }
 apply-groups EVPN-ESI;
+{% with interfaces = host_interfaces %}
+{% include "common/interfaces.j2" %}
+{% endwith %}
+{% include "common/vlans.j2" %}

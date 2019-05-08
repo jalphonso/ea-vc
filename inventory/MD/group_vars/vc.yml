@@ -1,1 +1,29 @@
 ---
+host_interfaces:
+  - name: ae0
+    description: host1
+    mtu: 9216
+    lacp:
+      active: true
+    trunk: true
+    vlan:
+      - 10
+      - 20
+
+  - name: ae1
+    description: host2
+    mtu: 9216
+    lacp:
+      active: true
+    trunk: true
+    vlan:
+      - 10
+      - 20
+
+  - name: et-0/0/48
+    description: host1
+    ae: "0"
+
+  - name: xe-0/0/49:0
+    description: host2
+    ae: "1"

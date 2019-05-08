@@ -1,4 +1,3 @@
-{% call junos.stanza() %}
 interfaces {
   {% block interfaces %}
   {% for interface in interfaces %}
@@ -62,4 +61,4 @@ interfaces {
   {% endfor %}
   {% endblock %}
 }
-{% endcall %}
+

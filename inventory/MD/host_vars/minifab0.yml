@@ -7,7 +7,7 @@ bgp:
         asn: 65535.65501
   overlay:
     local_ip: 10.255.255.0
-    asn: 65535.64999
+    asn: "65535.64999"
     neighbors:
       - ip: 10.255.255.1
 
@@ -31,6 +31,7 @@ interfaces:
 
   - name: ae49
     description: Inter-chassis LAG for VC pair
+    mtu: 9216
     lacp:
       active: true
     ip_cidr: 10.255.254.0/31

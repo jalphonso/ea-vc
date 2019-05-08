@@ -1,8 +1,7 @@
-{% call junos.stanza() %}
 routing-options {
     router-id {{ interfaces|selectattr('name', 'equalto', 'lo0')|map(attribute='ip_cidr')|first|ipv4('address') }};
     forwarding-table {
         export PFE-LB;
     }
 }
-{% endcall %}
+

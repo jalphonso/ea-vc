@@ -6,13 +6,13 @@
   roles:
     - Juniper.junos
   tasks:
-#  - name: Get Junos Facts
-#    juniper_junos_facts:
-#      host: "{{ ansible_host }}"
-#    register: facts
+  - name: Get Junos Facts
+    juniper_junos_facts:
+      host: "{{ ansible_host }}"
+    register: facts
 
   - set_fact:
-#      config_style: "{{ facts['ansible_facts']['junos']['switch_style'] }}"
+      config_style: "{{ facts['ansible_facts']['junos']['switch_style'] }}"
       config_path: "configs/{{ inventory_hostname }}.conf"
       template_path: templates/vc.j2
 

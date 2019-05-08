@@ -1,4 +1,3 @@
-{% call junos.stanza() %}
 switch-options {
     vtep-source-interface lo0.0;
     route-distinguisher {{ interfaces|selectattr('name', 'equalto', 'lo0')|map(attribute='ip_cidr')|first|ipv4('address') }}:1;
@@ -7,4 +6,4 @@ switch-options {
         auto;
     }
 }
-{% endcall %}
+
