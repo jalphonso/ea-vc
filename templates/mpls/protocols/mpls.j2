@@ -1,0 +1,17 @@
+{% call junos.stanza() %}
+mpls {
+  {% for interface in interfaces %}
+    {% if interface.mpls is defined and interface.mpls %}
+    label-switched-path {{ interface.lsp.name }} {
+        from {{ interface.ip_cidr|ipv4('address') }};
+        to {{ interface.neighbor|ipv4('address') }};
+        primary {{ interface.lsp.path }};
+    }
+    path {{ interface.lsp.path }} {
+        {{ interface.neighbor|ipv4('address') }} strict;
+    }
+    interface {{ interface.name }}.0;
+    {% endif %}
+  {% endfor %}
+}
+{% endcall %}

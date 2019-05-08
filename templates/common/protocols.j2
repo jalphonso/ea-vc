@@ -1,0 +1,5 @@
+{% call junos.stanza() %}
+protocols {
+    {% include "common/protocols/lldp.j2" %}
+}
+{% endcall %}

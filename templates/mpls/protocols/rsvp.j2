@@ -1,0 +1,9 @@
+{% call junos.stanza() %}
+rsvp {
+  {% for interface in interfaces %}
+    {% if interface.mpls is defined and interface.mpls %}
+    interface {{ interface.name }}.0;
+    {% endif %}
+  {% endfor %}
+}
+{% endcall %}

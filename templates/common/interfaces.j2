@@ -1,0 +1,63 @@
+{% call junos.stanza() %}
+interfaces {
+  {% for interface in interfaces %}
+    {{ interface.name }} {
+      {% if interface.description is defined and interface.description %}
+        description "{{ interface.name }}: {{ interface.description }}";
+      {% endif %}
+      {% if interface.mtu is defined and interface.mtu %}
+        mtu {{ interface.mtu }};
+      {% endif %}
+      {% if interface.name.startswith('ae') and interface.lacp is defined %}
+        aggregated-ether-options {
+            lacp {
+            {% if interface.lacp.active is defined and interface.lacp.active %}
+                active;
+            {% else %}
+                passive;
+            {% endif %}
+            }
+        }
+      {% endif %}
+      {% if interface.ae is defined and interface.ae %}
+        ether-options {
+            802.3ad ae{{ interface.ae }};
+        }
+      {% else %}
+        unit 0 {
+          {% if interface.ip_cidr is defined and interface.ip_cidr %}
+            family inet {
+                address {{ interface.ip_cidr|ipv4('cidr') }};
+            }
+          {% elif interface.vlan is defined and interface.vlan %}
+            {% if config_style == 'BRIDGE_DOMAIN' %}
+            family bridge {
+            {% else %}
+            family ethernet-switching {
+            {% endif %}
+              {% if interface.trunk %}
+                interface-mode trunk;
+              {% endif %}
+              {% if interface.vlan is iterable and interface.vlan|length > 1 %}
+                {% set vlan_list = "[ " + interface.vlan | join(' ') + " ]" %}
+              {% else %}
+                {% set vlan_list = interface.vlan %}
+              {% endif %}
+              {% if config_style == 'BRIDGE_DOMAIN' %}
+                vlan-id-list {{ vlan_list }};
+              {% else %}
+                vlan {
+                    members {{ vlan_list }};
+                }
+              {% endif %}
+            }
+          {% endif %}
+          {% if interface.mpls is defined and interface.mpls %}
+            family mpls;
+          {% endif %}
+        }
+      {% endif %}
+    }
+  {% endfor %}
+}
+{% endcall %}

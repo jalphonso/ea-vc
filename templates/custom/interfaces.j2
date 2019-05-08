@@ -1,0 +1,9 @@
+{% call junos.stanza() %}
+interfaces {
+    irb {
+        unit <*> {
+            proxy-macip-advertisement;
+        }
+    }
+}
+{% endcall %}

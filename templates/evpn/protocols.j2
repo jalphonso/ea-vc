@@ -1,0 +1,6 @@
+{% call junos.stanza() %}
+protocols {
+    {% include "evpn/protocols/bgp.j2" %}
+    {% include "evpn/protocols/evpn.j2" %}
+}
+{% endcall %}

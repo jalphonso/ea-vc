@@ -1,0 +1,40 @@
+---
+bgp:
+  underlay:
+    asn: "65535.65500"
+    neighbors:
+      - ip: 10.255.254.1
+        asn: 65535.65501
+  overlay:
+    local_ip: 10.255.255.0
+    asn: 65535.64999
+    neighbors:
+      - ip: 10.255.255.1
+
+interfaces:
+
+  - name: et-0/0/52
+    description: Used for inter-chassis LAG
+    ae: 49
+
+  - name: et-0/0/53
+    description: Used for inter-chassis LAG
+    ae: 49
+
+  - name: et-0/0/54
+    description: Used for inter-chassis LAG
+    ae: 49
+
+  - name: et-0/0/55
+    description: Used for inter-chassis LAG
+    ae: 49
+
+  - name: ae49
+    description: Inter-chassis LAG for VC pair
+    lacp:
+      active: true
+    ip_cidr: 10.255.254.0/31
+    is_icl: true
+
+  - name: lo0
+    ip_cidr: 10.255.255.0/32

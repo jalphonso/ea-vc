@@ -1,0 +1,20 @@
+#jinja2: lstrip_blocks: True, trim_blocks: True
+{#
+Top level jinja2 template to order everything and indent properly via macros
+#}
+{% import "macros/junos.j2" as junos %}
+groups {
+{% call junos.stanza() %}
+EVPN-ESI {
+    {% include "common/chassis.j2" %}
+    {% include "common/interfaces.j2" %}
+    {% include "custom/interfaces.j2" %}
+    {% include "evpn/policy-options.j2" %}
+    {% include "common/routing-options.j2" %}
+    {% include "common/protocols.j2" %}
+    {% include "evpn/protocols.j2" %}
+    {% include "evpn/switch-options.j2" %}
+}
+{% endcall %}
+}
+apply-groups EVPN-ESI;

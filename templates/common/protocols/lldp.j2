@@ -1,0 +1,11 @@
+{% call junos.stanza() %}
+lldp {
+    interface all;
+    interface em0 {
+        disable;
+    }
+    interface em1 {
+        disable;
+    }
+}
+{% endcall %}

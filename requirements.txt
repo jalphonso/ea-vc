@@ -1,0 +1,8 @@
+ansible
+Jinja2
+netaddr
+PyYAML
+ncclient
+lxml
+junos-eznc
+jxmlease

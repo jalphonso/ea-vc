@@ -1,0 +1,9 @@
+{% call junos.stanza() %}
+chassis {
+    aggregated-devices {
+        ethernet {
+            device-count 50;
+        }
+    }
+}
+{% endcall %}

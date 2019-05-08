@@ -1,0 +1,6 @@
+*.retry
+*.log
+*.bak
+*.swp
+*.pyc
+source_configs/

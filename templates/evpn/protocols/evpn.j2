@@ -1,0 +1,7 @@
+{% call junos.stanza() %}
+evpn {
+    encapsulation vxlan;
+    default-gateway no-gateway-community;
+    extended-vni-list all;
+}
+{% endcall %}
