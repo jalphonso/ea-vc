@@ -5,6 +5,17 @@ Top level jinja2 template to order everything and indent properly via macros
 {% import "macros/junos.j2" as junos %}
 groups {
 {% call junos.stanza() %}
+{% with interfaces = mgmt_interface %}
+MGMT {
+    {% call junos.stanza() %}
+    {% include "common/system.j2" %}
+    {% include "common/interfaces.j2" %}
+    {% include "common/forwarding-options.j2" %}
+    {% include "mgmt/routing-options.j2" %}
+    {% endcall %}
+}
+{% endwith %}
+{% with interfaces = system_interfaces %}
 EVPN-ESI {
     {% call junos.stanza() %}
     {% include "common/chassis.j2" %}
@@ -15,10 +26,17 @@ EVPN-ESI {
     {% include "evpn/switch-options.j2" %}
     {% endcall %}
 }
+{% endwith %}
 {% endcall %}
 }
-apply-groups EVPN-ESI;
+apply-groups [ MGMT EVPN-ESI ];
 {% with interfaces = host_interfaces %}
+{% for vlan in vlans %}
+    {# HACK. Temporary until higher level app is written to retreive and feed in the actual data #}
+    {% set ip_cidr = '192.168.' + (loop.index - 1)|string + '.' + vgw_local_index|string + '/24' %}
+    {% set vgw_ip = '192.168.' + (loop.index - 1)|string + '.1' %}
+    {% set interfaces = interfaces.append({ 'name': 'irb.' + vlan.id|string, 'ip_cidr': ip_cidr, 'vgw_ip': vgw_ip }) %}
+{% endfor %}
 {% include "common/interfaces.j2" %}
 {% endwith %}
 {% include "common/vlans.j2" %}

@@ -1,7 +1,11 @@
 interfaces {
   {% block interfaces %}
   {% for interface in interfaces %}
+    {% if interface.name.startswith('irb') %}
+    irb {
+    {% else %}
     {{ interface.name }} {
+    {% endif %}
       {% if interface.description is defined and interface.description %}
         description "{{ interface.name }}: {{ interface.description }}";
       {% endif %}
@@ -9,6 +13,14 @@ interfaces {
         mtu {{ interface.mtu }};
       {% endif %}
       {% if interface.name.startswith('ae') and interface.lacp is defined %}
+      {% if interface.esi is defined and interface.esi %}
+        {% set x, ae = interface.name.split('ae') %}
+        {% set ae = '%02d' % ae|int %}
+        esi {
+            00:00:00:00:00:00:51:00:00:{{ ae }};
+            all-active;
+        }
+      {% endif %}
         aggregated-ether-options {
             lacp {
             {% if interface.lacp.active is defined and interface.lacp.active %}
@@ -16,12 +28,25 @@ interfaces {
             {% else %}
                 passive;
             {% endif %}
+            {% if interface.esi is defined and interface.esi %}
+                system-id 00:00:51:00:00:{{ ae }};
+            {% endif %}
             }
         }
       {% endif %}
-      {% if interface.ae is defined and interface.ae %}
+      {% if interface.ae is defined and interface.ae|string %}
         ether-options {
             802.3ad ae{{ interface.ae }};
+        }
+      {% elif interface.name.startswith('irb') and interface.vgw_ip is defined %}
+        {% set irb, unit = interface.name.split('irb.') %}
+        {% set unit = unit|int %}
+        unit {{ unit }} {
+            family inet {
+                address {{ interface.ip_cidr|ipv4('cidr') }} {
+                  virtual-gateway-address {{ interface.vgw_ip|ipv4('address') }};
+                }
+            }
         }
       {% else %}
         unit 0 {

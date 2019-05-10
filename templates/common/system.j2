@@ -1,0 +1,45 @@
+system {
+    login {
+        user Lab {
+            uid 2000;
+            class super-user;
+            authentication {
+                encrypted-password "$6$zIKJNefJ$amwbrri1wHu5ME3WtL0tv6bOKt3U5u/VLEV3nDdGErC893RdHfQVs6DLIZEiIh3cIy8xEN7X8yaqjuY06gfD60"; ## SECRET-DATA
+                ssh-rsa "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAg49vWxKAPel267P2rmZNblVkNFxxO3Dn1yX4cBcJ0a4bVJbyZFetvHHEGa9576Sh6bJ2oK3Q73taXIAw/GbV/JJASX8yG/sJthurVyRKEWdc90kKoCfvpFAYz2tZS6dXZWhx9iphm+K1msXV40/3mGDdZ3THhRl1BevplyD6+OE55swq3bk2CRWqv5Xvpmvz5UCqT7V1wTHwm2cQuFekTv9feWG4sNnx6ZMFyP+WU+CMCthvXmYzbgdH7884F8K54vvBRYA01LND//Vj+i78GcMgZ6Kz2hMPx5IHPH/i++LcOFVSLfxWw6FLNMLphERy3X5NsrFgHvwnA/Ql12PB4Q== "; ## SECRET-DATA
+            }
+        }
+        user juniper {
+            uid 2001;
+            class super-user;
+            authentication {
+                encrypted-password "$6$JNow/UvT$Tu5aPwN5pVPrJ8lEDNuXb/PrhFC9AqI/EAQfYQdizjH3asyfItiuyw7W6hVm0fj8PQ5rjKmnnzNQ8/yypcCuk0"; ## SECRET-DATA
+            }
+        }
+    }
+    root-authentication {
+        encrypted-password "$6$WHlSmksg$rMv.RPMKbu/a9qfEG41UlmbWsiQa9i759FaOWdG.1Oc.hjI/KPFmJID8XdJ.LiOKYCTtUPImK5LZRPEqrP/Lu."; ## SECRET-DATA
+    }
+    services {
+        ssh {
+            root-login allow;
+            protocol-version v2;
+        }
+        netconf {
+            ssh;
+        }
+    }
+    host-name {{ inventory_hostname }};
+    syslog {
+        user * {
+            any emergency;
+        }
+        file messages {
+            any notice;
+            authorization info;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+    }
+}
+

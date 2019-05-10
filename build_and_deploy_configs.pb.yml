@@ -21,18 +21,19 @@
       src: "{{ template_path }}"
       dest: "{{ config_path }}"
 
-#  - name: Deploy config to Junos devices
-#    juniper_junos_config:
-#      host: "{{ ansible_host }}"
-#      load: merge
-#      src: "{{ config_path }}"
-#      dest_dir: output
-#      diff: true
-#      check: true
-#      commit: true
-#      port: 830
-#      timeout: 60
-#    register: config_result
+  - name: Deploy config to Junos devices
+    juniper_junos_config:
+      host: "{{ ansible_host }}"
+      load: override
+      src: "{{ config_path }}"
+      dest_dir: output
+      diff: true
+      check: true
+      commit: true
+      confirmed: 2
+      port: 830
+      timeout: 60
+    register: config_result
 
 #  - name: cat diffs_file
 #    debug:
