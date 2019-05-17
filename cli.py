@@ -94,16 +94,25 @@ def _validate_input(prompt, input_type=str, input_min=None, input_max=None, cli_
 
 
 def add_host(args, vc):
+  ## Initial questions
   vlans = []
   trunk = _validate_input("Is this host trunking Vlans? (y or n): ", bool, default=True)
   jumbo = _validate_input("Enable Jumbo Frames? (y or n): ", bool, default=True)
   lag = _validate_input("Is this host using multiple intefaces in a lag? (y or n): ", bool, default=True)
   if lag:
     ae = _validate_input("Enter ae id for lag (bond): ", int, 0, 48)
+    ae_description = _validate_input("Enter ae interface description: ")
+    lacp = _validate_input("Is ae using lacp?: ", bool, default=True)
+    if lacp:
+      lacp_active = _validate_input("Use lacp active (y for active, n for passive)?: ", bool, default=True)
+
+  ## Construct VLAN list
   while True:
     vlans.append(_validate_input("Enter vlan id for host interface: ", int, 1, 4094))
     if not trunk or not _validate_input("Do you want to enter another vlan to this trunk? (y or n): ", bool, default=False):
       break
+
+  ## Build Interface definition(s)
   while True:
     interface = _validate_input("Enter interface name: ")
     description = _validate_input("Enter interface description: ")
@@ -115,13 +124,31 @@ def add_host(args, vc):
       host_interface_yml['ae'] = ae
     else:
       host_interface_yml['vlan'] = vlans
+      if jumbo:
+        host_interface_yml['mtu'] = 9216
     vc['host_interfaces'].append(host_interface_yml)
-    vc['host_interfaces'] = sorted(vc['host_interfaces'], key= lambda x: x['name'])
     if lag and _validate_input("Does this host have more interfaces that need to be "
                            "configured in the same lag? (y or n): ", bool, default=False):
       continue
     break
 
+  ## Build AE Interface definition
+  if lag:
+    ae_interface = {
+      'name': "ae" + str(ae),
+      'description': ae_description,
+      'esi': True,
+      'vlan': vlans
+    }
+    if jumbo:
+      ae_interface['mtu'] = 9216
+    if lacp:
+      ae_interface['lacp'] = {}
+      ae_interface['lacp']['active'] = lacp_active
+    if trunk:
+      ae_interface['trunk'] = True
+    vc['host_interfaces'].append(ae_interface)
+  vc['host_interfaces'] = sorted(vc['host_interfaces'], key= lambda x: x['name'])
 
 def delete_host(args, vc):
   while True:
