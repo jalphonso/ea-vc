@@ -125,12 +125,12 @@ def main():
   args = parser.parse_args()
 
   print(f"{Fore.YELLOW}Ansible operation assistant{Style.RESET_ALL}")
-  oper = validate_input(f"select operation(s) to run from list\n{oper_choices}\n"
-                         "Type operation you want to run: ", list, choices=oper_choices)
 
   vc_file = "./inventory/dc1/group_vars/vc.yml"
   try:
     with open(vc_file) as f:
+      oper = validate_input(f"select operation(s) to run from list\n{oper_choices}\n"
+                            "Type operation you want to run: ", list, choices=oper_choices)
       vc = yaml.load(f)
       if callable(globals()[oper]):
         globals()[oper](args, vc)
@@ -140,7 +140,9 @@ def main():
     with open(vc_file, 'w') as f:
       yaml.dump(vc, f)
   except FileNotFoundError:
-    pass
+    print("Initializing VC file, please run again")
+    with open(vc_file, 'w') as f:
+      yaml.dump({'host_interfaces': [], 'vlans': []}, f)
 
 
 if __name__ == '__main__':
