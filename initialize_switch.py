@@ -31,11 +31,11 @@ def main():
   except FileNotFoundError:
     print(f"{Fore.YELLOW}Ansible yaml file creator assistant{Style.RESET_ALL}")
     node_id = validate_input("Enter node id (must be unique per VC) 0 or 1: ",
-                                      int, 0, 1, cli_input=args.node_id)
+                             int, 0, 1, cli_input=args.node_id)
     neighbor_node_id = 0 if node_id else 1
     vgw_local_index = node_id + 2
     mgmt_ip = validate_input("Enter management IP in CIDR format x.x.x.x/x: ", "IPNetwork",
-                                      cli_input=args.mgmt_ip)
+                             cli_input=args.mgmt_ip)
     mgmt_default_gw = mgmt_ip[1]
     underlay_asn = "65535.6550" + str(node_id)
     neighbor_underlay_asn = "65535.6550" + str(neighbor_node_id)
