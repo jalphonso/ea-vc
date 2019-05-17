@@ -12,11 +12,17 @@ yaml.indent(sequence=4, offset=2)
 yaml.explicit_start = True
 
 
-def _validate_input(prompt, input_type=str, input_min=None, input_max=None, cli_input = None, default = None):
+def _validate_input(prompt, input_type=str, input_min=None, input_max=None, cli_input = None, default = None, choices = None):
     max_tries = 5
     tries = 0
-    if default:
-      prompt = prompt + "[" + str(default) + "]: "
+    if default is not None:
+      if default is False:
+        print_default = 'n'
+      elif default is True:
+        print_default = 'y'
+      else:
+        print_default = default
+      prompt = prompt + "[" + str(print_default) + "]: "
     while True and tries < max_tries:
         if not cli_input:
           user_input = input(prompt).strip()
@@ -24,7 +30,7 @@ def _validate_input(prompt, input_type=str, input_min=None, input_max=None, cli_
           user_input = cli_input
           cli_input = None
         if not user_input:
-            if not default:
+            if default is None:
               print("Input cannot be blank, please try again")
             else:
               user_input = default
@@ -57,6 +63,11 @@ def _validate_input(prompt, input_type=str, input_min=None, input_max=None, cli_
                 break
             else:
                 print(f"Input needs to be yes/no or y/n, please try again")
+        elif input_type == list:
+          if user_input in choices:
+            break
+          else:
+            print(f"Selection must be one of the following {choices}")
         elif input_type == 'IPAddress':
           try:
             if len(user_input.split('.')) != 4:
@@ -82,14 +93,108 @@ def _validate_input(prompt, input_type=str, input_min=None, input_max=None, cli_
     return user_input
 
 
+def add_host(args, vc):
+  vlans = []
+  trunk = _validate_input("Is this host trunking Vlans? (y or n): ", bool, default=True)
+  jumbo = _validate_input("Enable Jumbo Frames? (y or n): ", bool, default=True)
+  lag = _validate_input("Is this host using multiple intefaces in a lag? (y or n): ", bool, default=True)
+  if lag:
+    ae = _validate_input("Enter ae id for lag (bond): ", int, 0, 48)
+  while True:
+    vlans.append(_validate_input("Enter vlan id for host interface: ", int, 1, 4094))
+    if not trunk or not _validate_input("Do you want to enter another vlan to this trunk? (y or n): ", bool, default=False):
+      break
+  while True:
+    interface = _validate_input("Enter interface name: ")
+    description = _validate_input("Enter interface description: ")
+    host_interface_yml = {
+      'name': interface,
+      'description': description,
+    }
+    if lag:
+      host_interface_yml['ae'] = ae
+    else:
+      host_interface_yml['vlan'] = vlans
+    vc['host_interfaces'].append(host_interface_yml)
+    vc['host_interfaces'] = sorted(vc['host_interfaces'], key= lambda x: x['name'])
+    if lag and _validate_input("Does this host have more interfaces that need to be "
+                           "configured in the same lag? (y or n): ", bool, default=False):
+      continue
+    break
+
+
+def delete_host(args, vc):
+  while True:
+    interface_name = _validate_input("Enter interface name: ")
+    for interface in vc['host_interfaces']:
+      if interface['name'] == interface_name:
+        vc['host_interfaces'].remove(interface)
+    if not _validate_input("Delete more interfaces? (y or n): ", bool, default=False):
+      break
+
+
+def add_vlan(args, vc):
+  while True:
+    vlan = _validate_input("Enter vlan id: ", int, 1, 4094)
+    vlan_yml = {
+      'name': "vlan." + str(vlan),
+      'id': vlan
+    }
+    if vlan_yml not in vc['vlans']:
+      vc['vlans'].append(vlan_yml)
+      vc['vlans'] = sorted(vc['vlans'], key = lambda x: x['id'])
+    if not _validate_input("Do you want to add another one? (y or n): ", bool, default=False):
+      break
+
+
+def delete_vlan(args, vc):
+  while True:
+    vlan = _validate_input("Enter vlan id: ", int, 1, 4094)
+    vlan_yml = {
+      'name': "vlan." + str(vlan),
+      'id': vlan
+    }
+    if vlan_yml in vc['vlans']:
+      vc['vlans'].remove(vlan_yml)
+    if not _validate_input("Do you want to delete another one? (y or n): ", bool, default=False):
+      break
+
+
+def push_changes(args, vc):
+  pass
+
+
 def ui():
-  oper_choices = ["add_host", "delete_host", "add_vlan", "delete_vlan"]
+  oper_choices = ["add_host", "delete_host", "add_vlan", "delete_vlan", "push_changes"]
   parser = argparse.ArgumentParser(description='Execute operation(s)')
   parser.add_argument('--hostname', dest='hostname', metavar='<hostname>',
                       help='provide hostname of device')
+  parser.add_argument('-o', '--oper', dest='operations', metavar='<oper>',
+                      choices=oper_choices, nargs='+',
+                      help='select operation(s) to run from list')
+  parser.add_argument('--vlan_id', dest='vlan_id', metavar='<vlan_id>',
+                      help='provide vlan_id')
+  parser.add_argument('--interface', dest='interface', metavar='<interface>',
+                      help='provide interface name')
   args = parser.parse_args()
 
   print(f"{Fore.YELLOW}Ansible operation assistant{Style.RESET_ALL}")
+  oper = _validate_input(f"select operation(s) to run from list\n{oper_choices}\n"
+                         "Type operation you want to run: ", list, choices=oper_choices)
+
+  vc_file = "./inventory/dc1/group_vars/vc.yml"
+  try:
+    with open(vc_file) as f:
+      vc = yaml.load(f)
+      if callable(globals()[oper]):
+        globals()[oper](args, vc)
+      else:
+        print(f"{Fore.RED}Invalid operation: '{oper}'\nProblem with code. {Style.RESET_ALL}")
+        sys.exit(2)
+    with open(vc_file, 'w') as f:
+      yaml.dump(vc, f)
+  except FileNotFoundError:
+    pass
 
 
 def main():
@@ -105,7 +210,6 @@ def main():
   hostname = _validate_input("Enter hostname for device: ", cli_input=args.hostname)
   host_file = "./inventory/dc1/host_vars/" + hostname + ".yml"
   try:
-    raise FileNotFoundError
     with open(host_file) as f:
       host = yaml.load(f)
   except FileNotFoundError:
