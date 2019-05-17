@@ -11,7 +11,7 @@ Added Python CLI to build out yaml files. Still a WIP.
 
 *Requires Python 3.6*
 
-Initialize switch with command line options
+# Initialize switch with command line options
 ```
 python initialize_switch.py -h
 usage: initialize_switch.py [-h] [--hostname <hostname>] [--node_id <node_id>]
@@ -29,7 +29,7 @@ optional arguments:
 Ansible yaml file creator assistant
 ```
 
-Initialize switch interactively
+# Initialize switch interactively
 ```
 python initialize_switch.py
 Enter hostname for device: test1
@@ -38,7 +38,27 @@ Enter node id (must be unique per VC) 0 or 1: 1
 Enter management IP in CIDR format x.x.x.x/x: 192.168.254.28/24
 ```
 
-Manage VC interactively
+# Manage VC with command line options
+```
+python manage_vc.py -o add_vlan --vlan_id 40 50 60 70 80
+python manage_vc.py -o delete_host --hostname testdev2
+python manage_vc.py -o delete_vlan --vlan_id 40 50
+
+python manage_vc.py -o add_host --vlan_id 100 200 300 --interface xe-2/0/1 xe-2/0/2 --interface_description "testdev4" --hostname testdev4 --jumbo --trunk --lag --ae 5 --ae_description testdev4 --lacp --lacp_active
+Ansible operation assistant
+Cannot add new host testdev4 because interface xe-2/0/1 already exists for host testdev3
+Please fix and try again, Quitting...
+
+python manage_vc.py -o add_host --vlan_id 100 200 300 --interface xe-2/0/3 xe-2/0/4 --interface_description "testdev4" --hostname testdev4 --jumbo --trunk --lag --ae 5 --ae_description testdev4 --lacp --lacp_active
+Ansible operation assistant
+Cannot add new host testdev4 because interface ae5 already exists for host testdev3
+Please fix and try again, Quitting...
+
+python manage_vc.py -o add_host --vlan_id 100 200 300 --interface xe-2/0/3 xe-2/0/4 --interface_description "testdev4" --hostname testdev4 --jumbo --trunk --lag --ae 6 --ae_description testdev4 --lacp --lacp_active
+Ansible operation assistant
+```
+
+# Manage VC interactively
 ```
 python manage_vc.py
 Ansible operation assistant

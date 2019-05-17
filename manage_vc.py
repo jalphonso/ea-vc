@@ -30,16 +30,19 @@ def add_host(args, vc):
                                    bool, default=True, cli_input=args.lacp_active)
 
   # Construct VLAN list
-  while True:
-    vlans.append(validate_input("Enter vlan id for host interface: ", int, 1, 4094, cli_input=args.vlan_id))
-    if not trunk or not validate_input("Do you want to enter another vlan to this trunk? (y or n): ",
-                                       bool, default=False):
-      break
+    if args.vlan_id:
+      for vlan_id in args.vlan_id:
+        vlans.append(validate_input("Enter vlan id for host interface: ", int, 1, 4094, cli_input=vlan_id))
+    else:
+      while True:
+        vlans.append(validate_input("Enter vlan id for host interface: ", int, 1, 4094))
+        if not trunk or not validate_input("Do you want to enter another vlan to this trunk? (y or n): ",
+                                                              bool, default=False):
+          break
 
-  # Build Interface definition(s)
-  while True:
-    interface = validate_input("Enter interface name: ", cli_input=args.interface)
-    description = validate_input("Enter interface description: ", cli_input=args.interface_description)
+  # Private Interface Function
+  def build_interface(interface_name):
+    interface = validate_input("Enter interface name: ", cli_input=interface_name)
     host_interface_yml = {
       'name': interface,
       'description': description,
@@ -51,11 +54,20 @@ def add_host(args, vc):
       host_interface_yml['vlan'] = vlans
       if jumbo:
         host_interface_yml['mtu'] = 9216
-    vc['host_interfaces'].append(host_interface_yml)
-    if lag and validate_input("Does this host have more interfaces that need to be "
-                              "configured in the same lag? (y or n): ", bool, default=False):
-      continue
-    break
+    add_unique_interface(vc['host_interfaces'], host_interface_yml)
+
+  # Build Interface definition(s)
+  description = validate_input("Enter interface description: ", cli_input=args.interface_description)
+  if args.interface:
+    for interface_name in args.interface:
+      build_interface(interface_name)
+  else:
+    while True:
+      build_interface(None)
+      if lag and validate_input("Does this host have more interfaces that need to be "
+                                "configured in the same lag? (y or n): ", bool, default=False):
+        continue
+      break
 
   # Build AE Interface definition
   if lag:
@@ -73,8 +85,19 @@ def add_host(args, vc):
       ae_interface['lacp']['active'] = lacp_active
     if trunk:
       ae_interface['trunk'] = True
-    vc['host_interfaces'].append(ae_interface)
+    add_unique_interface(vc['host_interfaces'], ae_interface)
+
   vc['host_interfaces'] = sorted(vc['host_interfaces'], key=lambda x: x['name'])
+
+
+def add_unique_interface(interface_list, new_interface):
+  for d in interface_list:
+    if d['name'] == new_interface['name']:
+      print(f"Cannot add new host {new_interface['tag']} because interface {new_interface['name']} "
+            f"already exists for host {d['tag']}")
+      print(f"Please fix and try again, Quitting...")
+      sys.exit(1)
+  interface_list.append(new_interface)
 
 
 def delete_host(args, vc):
@@ -82,8 +105,8 @@ def delete_host(args, vc):
   vc['host_interfaces'][:] = [x for x in vc['host_interfaces'] if x['tag'] != hostname]
 
 
-def add_vlan(args, vc):
-  vlan = validate_input("Enter vlan id: ", int, 1, 4094, cli_input=args.vlan_id)
+def add_vlan(vlan_id, vc):
+  vlan = validate_input("Enter vlan id: ", int, 1, 4094, cli_input=vlan_id)
   vlan_yml = {
     'name': "vlan." + str(vlan),
     'id': vlan
@@ -93,8 +116,8 @@ def add_vlan(args, vc):
     vc['vlans'] = sorted(vc['vlans'], key=lambda x: x['id'])
 
 
-def delete_vlan(args, vc):
-  vlan = validate_input("Enter vlan id: ", int, 1, 4094, cli_input=args.vlan_id)
+def delete_vlan(vlan_id, vc):
+  vlan = validate_input("Enter vlan id: ", int, 1, 4094, cli_input=vlan_id)
   vc['vlans'][:] = [x for x in vc['vlans'] if x['id'] != vlan]
 
 
@@ -108,10 +131,10 @@ def main():
   parser.add_argument('-o', '--oper', dest='oper', metavar='<oper>',
                       choices=oper_choices,
                       help='select operation(s) to run from list')
-  parser.add_argument('--vlan_id', dest='vlan_id', metavar='<vlan_id>',
-                      help='provide vlan_id')
-  parser.add_argument('--interface', dest='interface', metavar='<interface>',
-                      help='provide interface name')
+  parser.add_argument('--vlan_id', dest='vlan_id', metavar='<vlan_id>', nargs='+',
+                      help='provide one or more vlan_id(s)')
+  parser.add_argument('--interface', dest='interface', metavar='<interface>', nargs='+',
+                      help='provide one or more interface name(s)')
   parser.add_argument('--interface_description', dest='interface_description', metavar='<interface_description>',
                       help='provide interface description')
   parser.add_argument('--hostname', dest='hostname', metavar='<hostname>',
@@ -141,7 +164,14 @@ def main():
                             "Type operation you want to run: ", list, choices=oper_choices, cli_input=args.oper)
       vc = yaml.load(f)
       if callable(globals()[oper]):
-        globals()[oper](args, vc)
+        if 'vlan' in oper:
+          if args.vlan_id:
+            for vlan_id in args.vlan_id:
+              globals()[oper](vlan_id, vc)
+          else:
+            globals()[oper](None, vc)
+        else:
+            globals()[oper](args, vc)
       else:
         print(f"{Fore.RED}Invalid operation: '{oper}'\nProblem with code. {Style.RESET_ALL}")
         sys.exit(2)
