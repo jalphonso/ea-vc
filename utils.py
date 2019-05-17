@@ -15,12 +15,14 @@ def validate_input(prompt, input_type=str, input_min=None, input_max=None, cli_i
       print_default = default
     prompt = prompt + "[" + str(print_default) + "]: "
   while True and tries < max_tries:
-    if not cli_input:
+    if cli_input is None:
       user_input = input(prompt).strip()
     else:
       user_input = cli_input
       cli_input = None
-    if not user_input:
+    if input_type == bool and type(user_input) == bool:
+      break
+    elif not user_input:
       if default is None:
         print("Input cannot be blank, please try again")
       else:
@@ -45,12 +47,7 @@ def validate_input(prompt, input_type=str, input_min=None, input_max=None, cli_i
       else:
         break
     elif input_type == bool:
-      if user_input == True:
-        bool_char = 'y'
-      elif user_input == False:
-        bool_char = 'n'
-      else:
-        bool_char = user_input.lower()
+      bool_char = user_input.lower()
       if bool_char == 'y' or bool_char == 'yes':
         user_input = True
         break

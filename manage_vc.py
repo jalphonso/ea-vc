@@ -1,5 +1,6 @@
 import argparse
 import ruamel.yaml
+import subprocess
 import sys
 from colorama import Fore, Style
 from host import Host
@@ -37,7 +38,7 @@ def add_host(args, vc):
       while True:
         vlans.append(validate_input("Enter vlan id for host interface: ", int, 1, 4094))
         if not trunk or not validate_input("Do you want to enter another vlan to this trunk? (y or n): ",
-                                                              bool, default=False):
+                                           bool, default=False):
           break
 
   # Private Interface Function
@@ -122,7 +123,7 @@ def delete_vlan(vlan_id, vc):
 
 
 def push_changes(args, vc):
-  pass
+  subprocess.call(['ansible-playbook', '-i', 'inventory/dc1', 'build_and_deploy_configs.pb.yml'])
 
 
 def main():
@@ -139,15 +140,25 @@ def main():
                       help='provide interface description')
   parser.add_argument('--hostname', dest='hostname', metavar='<hostname>',
                       help='provide hostname of end device')
-  parser.add_argument('--trunk', dest='trunk', action='store_true',
-                      help='enable vlan trunk for host')
-  parser.add_argument('--jumbo', dest='jumbo', action='store_true',
+  parser.add_argument('--trunk', dest='trunk', action='store_true', default=None,
+                      help='enable vlan trunk mode for host')
+  parser.add_argument('--access', dest='trunk', action='store_false', default=None,
+                      help='enable vlan access mode for host')
+  parser.add_argument('--jumbo', dest='jumbo', action='store_true', default=None,
                       help='enable jumbo frames for host')
-  parser.add_argument('--lacp', dest='lacp', action='store_true',
+  parser.add_argument('--no-jumbo', dest='jumbo', action='store_false', default=None,
+                      help='do not use jumbo frames for host')
+  parser.add_argument('--lacp', dest='lacp', action='store_true', default=None,
                       help='enable lacp for host (only applies to lag)')
-  parser.add_argument('--lacp_active', dest='lacp_active', action='store_true',
+  parser.add_argument('--no-lacp', dest='lacp', action='store_false', default=None,
+                      help='enable lacp for host (only applies to lag)')
+  parser.add_argument('--lacp_active', dest='lacp_active', action='store_true', default=None,
                       help='set lacp to active if lacp is enabled for host')
-  parser.add_argument('--lag', dest='lag', action='store_true',
+  parser.add_argument('--lacp_passive', dest='lacp_active', action='store_false', default=None,
+                      help='set lacp to active if lacp is enabled for host')
+  parser.add_argument('--lag', dest='lag', action='store_true', default=None,
+                      help='enable lag for host')
+  parser.add_argument('--no-lag', dest='lag', action='store_false', default=None,
                       help='enable lag for host')
   parser.add_argument('--ae', dest='ae', metavar='<ae>',
                       help='provide ae id for host lag')
@@ -171,7 +182,7 @@ def main():
           else:
             globals()[oper](None, vc)
         else:
-            globals()[oper](args, vc)
+          globals()[oper](args, vc)
       else:
         print(f"{Fore.RED}Invalid operation: '{oper}'\nProblem with code. {Style.RESET_ALL}")
         sys.exit(2)
