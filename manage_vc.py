@@ -31,15 +31,15 @@ def add_host(args, vc):
                                    bool, default=True, cli_input=args.lacp_active)
 
   # Construct VLAN list
-    if args.vlan_id:
-      for vlan_id in args.vlan_id:
-        vlans.append(validate_input("Enter vlan id for host interface: ", int, 1, 4094, cli_input=vlan_id))
-    else:
-      while True:
-        vlans.append(validate_input("Enter vlan id for host interface: ", int, 1, 4094))
-        if not trunk or not validate_input("Do you want to enter another vlan to this trunk? (y or n): ",
-                                           bool, default=False):
-          break
+  if args.vlan_id:
+    for vlan_id in args.vlan_id:
+      vlans.append(validate_input("Enter vlan id for host interface: ", int, 1, 4094, cli_input=vlan_id))
+  else:
+    while True:
+      vlans.append(validate_input("Enter vlan id for host interface: ", int, 1, 4094))
+      if not trunk or not validate_input("Do you want to enter another vlan to this trunk? (y or n): ",
+                                          bool, default=False):
+        break
 
   # Private Interface Function
   def build_interface(interface_name):
