@@ -44,17 +44,20 @@ python manage_vc.py -o add_vlan --vlan_id 40 50 60 70 80
 python manage_vc.py -o delete_host --hostname testdev2
 python manage_vc.py -o delete_vlan --vlan_id 40 50
 
-python manage_vc.py -o add_host --vlan_id 100 200 300 --interface xe-2/0/1 xe-2/0/2 --interface_description "testdev4" --hostname testdev4 --jumbo --trunk --lag --ae 5 --ae_description testdev4 --lacp --lacp_active
+python manage_vc.py -o add_host --vlan_id 100 200 300 --interface xe-2/0/1 xe-2/0/2 --interface_description "testdev4"\
+                                --hostname testdev4 --jumbo --trunk --lag --ae 5 --ae_description testdev4 --lacp --lacp_active
 Ansible operation assistant
 Cannot add new host testdev4 because interface xe-2/0/1 already exists for host testdev3
 Please fix and try again, Quitting...
 
-python manage_vc.py -o add_host --vlan_id 100 200 300 --interface xe-2/0/3 xe-2/0/4 --interface_description "testdev4" --hostname testdev4 --jumbo --trunk --lag --ae 5 --ae_description testdev4 --lacp --lacp_active
+python manage_vc.py -o add_host --vlan_id 100 200 300 --interface xe-2/0/3 xe-2/0/4 --interface_description "testdev4"\
+                                --hostname testdev4 --jumbo --trunk --lag --ae 5 --ae_description testdev4 --lacp --lacp_active
 Ansible operation assistant
 Cannot add new host testdev4 because interface ae5 already exists for host testdev3
 Please fix and try again, Quitting...
 
-python manage_vc.py -o add_host --vlan_id 100 200 300 --interface xe-2/0/3 xe-2/0/4 --interface_description "testdev4" --hostname testdev4 --jumbo --trunk --lag --ae 6 --ae_description testdev4 --lacp --lacp_active
+python manage_vc.py -o add_host --vlan_id 100 200 300 --interface xe-2/0/3 xe-2/0/4 --interface_description "testdev4"\
+                                --hostname testdev4 --jumbo --trunk --lag --ae 6 --ae_description testdev4 --lacp --lacp_active
 Ansible operation assistant
 ```
 
