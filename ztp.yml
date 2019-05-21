@@ -1,6 +1,6 @@
 ---
 
-- hosts: ztp
+- hosts: ztp_servers
   gather_facts: no
   become: true
   become_method: sudo
@@ -38,8 +38,8 @@
       mode: 0644
       owner: dhcpd
       group: dhcpd
-    with_inventory_hostnames:
-      - subnets
+    with_items:
+      - "{{ ztp_subnets }}"
     notify: "restart dhcp"
 
   handlers:

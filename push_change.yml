@@ -1,6 +1,6 @@
 ---
 
-- hosts: all-vc
+- hosts: all_vcs
   connection: netconf
   gather_facts: no
   roles:
