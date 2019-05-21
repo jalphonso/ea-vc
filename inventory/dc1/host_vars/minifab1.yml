@@ -1,5 +1,6 @@
 ---
 vgw_local_index: 3
+serial: XH3718460142
 bgp:
   underlay:
     asn: "65535.65501"
@@ -14,8 +15,8 @@ bgp:
 
 mgmt_interface:
   - name: em0
-    ip_cidr: 192.168.254.28/24
-mgmt_default_gw: 192.168.254.1
+    ip_cidr: 192.168.105.11/24
+mgmt_default_gw: 192.168.105.1
 
 system_interfaces:
 

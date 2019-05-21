@@ -122,12 +122,21 @@ def delete_vlan(vlan_id, vc):
   vc['vlans'][:] = [x for x in vc['vlans'] if x['id'] != vlan]
 
 
-def push_changes(args, vc):
-  subprocess.call(['ansible-playbook', '-i', 'inventory/dc1', 'build_and_deploy_configs.pb.yml'])
+def build_configs(args, vc):
+  subprocess.call(['ansible-playbook', '-i', 'inventory/dc1', 'render_config.yml'])
+
+
+def push_change(args, vc):
+  subprocess.call(['ansible-playbook', '-i', 'inventory/dc1', 'push_change.yml'])
+
+
+def provision_ztp(args, vc):
+  subprocess.call(['ansible-playbook', '-i', 'inventory/dc1', 'ztp.yml'])
 
 
 def main():
-  oper_choices = ["add_host", "delete_host", "add_vlan", "delete_vlan", "push_changes"]
+  oper_choices = ["add_host", "delete_host", "add_vlan", "delete_vlan", "build_configs", "provision_ztp",
+                  "push_change"]
   parser = argparse.ArgumentParser(description='Execute operation(s)')
   parser.add_argument('-o', '--oper', dest='oper', metavar='<oper>',
                       choices=oper_choices,

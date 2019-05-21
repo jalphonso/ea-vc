@@ -1,0 +1,50 @@
+---
+
+- hosts: ztp
+  gather_facts: no
+  become: true
+  become_method: sudo
+  remote_user: ubuntu
+  tasks:
+
+  - set_fact:
+      junos_config_path: "configs/"
+      classes_template: "templates/isc-dhcp/classes.j2"
+      subnet_template: "templates/isc-dhcp/subnet.j2"
+      config_dir: "/etc/dhcp"
+      remote_config_dir: "/var/www/html/config/"
+
+  - name: copy junos configs to ztp isc-dhcp-server
+    copy:
+      src: "{{ junos_config_path }}"
+      dest: "{{ remote_config_dir }}"
+      owner: www-data
+      group: www-data
+      mode: 0644
+
+  - name: Build dhcp classes config from template
+    template:
+      src: "{{ classes_template }}"
+      dest: "{{ config_dir }}/classes.conf"
+      mode: 0644
+      owner: dhcpd
+      group: dhcpd
+    notify: "restart dhcp"
+
+  - name: Build dhcp pools config from template
+    template:
+      src: "{{ subnet_template }}"
+      dest: "{{ config_dir }}/{{ item }}.conf"
+      mode: 0644
+      owner: dhcpd
+      group: dhcpd
+    with_inventory_hostnames:
+      - subnets
+    notify: "restart dhcp"
+
+  handlers:
+  - name: Restart ISC DHCP service
+    systemd:
+      name: isc-dhcp-server
+      state: restarted
+    listen: "restart dhcp"

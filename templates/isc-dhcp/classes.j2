@@ -1,0 +1,5 @@
+{% for host in groups['switches'] %}
+class "{{ hostvars[host]['serial'] }}" {
+  match if option host-name = "{{ hostvars[host]['serial'] }}";
+}
+{% endfor %}

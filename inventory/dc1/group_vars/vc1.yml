@@ -1,4 +1,6 @@
 ---
+image: jinstall-host-qfx-5e-x86-64-18.4-20190424.0-secure-signed.tgz
+ztp_server_ip: 192.168.105.5
 host_interfaces:
   - name: ae5
     description: testdev3
