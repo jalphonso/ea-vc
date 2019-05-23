@@ -6,3 +6,4 @@
 source_configs/
 output/
 .vscode/
+__pycache__/

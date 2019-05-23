@@ -6,7 +6,7 @@ from host import Host
 from netaddr import IPAddress, IPNetwork
 from netaddr.core import AddrFormatError
 from ruamel.yaml.scalarstring import DoubleQuotedScalarString as dq
-from utils import validate_input
+from lib.utils.validate import validate_input
 
 yaml = ruamel.yaml.YAML()
 yaml.indent(sequence=4, offset=2)
@@ -14,19 +14,32 @@ yaml.explicit_start = True
 
 
 def main():
-  parser = argparse.ArgumentParser(description='Initialize yaml file for device')
-  parser.add_argument('--hostname', dest='hostname', metavar='<hostname>',
-                      help='provide hostname of device')
-  parser.add_argument('--node_id', dest='node_id', metavar='<node_id>',
-                      help='provide node id (must be unique per VC) 0 or 1')
+  parser = argparse.ArgumentParser(description='Initialize yaml files for devices in fabric')
+  parser.add_argument('--name', dest='fabric_name', metavar='<fabric name>',
+                      help='provide fabric name')
+  parser.add_argument('--hosts', dest='hosts', metavar='<hosts>', nargs='+',
+                      help='provide list of hosts belonging to this fabric')
+  parser.add_argument('--role', dest='role', metavar='<role>',
+                      help='provide role for host to be added (spine or leaf)')
   parser.add_argument('--mgmt_ip', dest='mgmt_ip', metavar='<mgmt_ip>',
                       help='provide mgmt_ip in CIDR format x.x.x.x/x')
   args = parser.parse_args()
 
-  hostname = validate_input("Enter hostname for device: ", cli_input=args.hostname)
-  host_file = "./inventory/dc1/host_vars/" + hostname + ".yml"
+
+  import sys
+  sys.exit()
+
+
+  fabric_name = validate_input("Enter fabric name: ", cli_input=args.name)
+  hosts = validate_input("Enter hostname for device: ", cli_input=args.hosts)
+  fabric_file = "./inventory/dc1/group_vars/" + fabric_name + ".yml"
+  hosts_file = "./inventory/dc1/hosts.yml"
+
+  for host in hosts:
+    node_file = "./inventory/dc1/host_vars/" + host + ".yml"
+
   try:
-    with open(host_file) as f:
+    with open(hosts_file) as f:
       host = yaml.load(f)
   except FileNotFoundError:
     print(f"{Fore.YELLOW}Ansible yaml file creator assistant{Style.RESET_ALL}")
@@ -90,7 +103,7 @@ def main():
     host = host.host
 
     try:
-      with open(host_file, 'w') as f:
+      with open(hosts_file, 'w') as f:
         yaml.dump(host, f)
     except Exception as e:
       print(e)
