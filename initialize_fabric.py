@@ -101,7 +101,10 @@ def main():
   except:
     exit("Unable to load ansible hosts file")
 
-  ansible_hosts['all']['children']['all_vcs']['children'][fabric_name] = {'hosts': {}}
+  try:
+    ansible_hosts['all']['children']['all_vcs']['children'][fabric_name] = {'hosts': {}}
+  except:
+    ansible_hosts['all']['children']['all_vcs']['children'] = {fabric_name: {'hosts': {}}}
   hosts_sub_yml_fabric = ansible_hosts['all']['children']['all_vcs']['children'][fabric_name]['hosts']
   hosts_sub_yml_switches = ansible_hosts['all']['children']['switches']
   for idx, host in enumerate(hosts):
@@ -121,11 +124,13 @@ def main():
     ztp_subnet = 'subnet_' + str(mgmt_ip.ip)[2]
     try:
       ansible_hosts['all']['children'][ztp_subnet]['hosts'].update({host: None})
-    except KeyError:
+    except (AttributeError, KeyError):
       ansible_hosts['all']['children'][ztp_subnet] = {'hosts': {host: None}}
 
     try:
       ztp_subnets = ansible_hosts['all']['vars']['ztp_subnets']
+      if ztp_subnets is None:
+        ztp_subnets = []
       if ztp_subnet not in ztp_subnets:
         ztp_subnets.append(ztp_subnet)
     except Exception as e:
@@ -133,7 +138,7 @@ def main():
 
     try:
       hosts_sub_yml_switches['hosts'].update({host: None})
-    except KeyError:
+    except (AttributeError, KeyError):
       hosts_sub_yml_switches = {'hosts': {host: None}}
 
     hosts_sub_yml_fabric.update({host: {'ansible_host': str(mgmt_ip.ip)}})
