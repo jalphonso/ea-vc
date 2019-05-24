@@ -17,3 +17,7 @@ def add_unique_vlan(vlan_list, new_vlan):
                                          f"for vlan id {new_vlan['id']} because "
                                          f"vlan already exists with name {d['name']}")
   vlan_list.append(new_vlan)
+
+def is_list_unique(l):
+  seen = set()
+  return not any(i in seen or seen.add(i) for i in l)
