@@ -6,3 +6,5 @@ ncclient
 lxml
 junos-eznc
 jxmlease
+ruamel.yaml
+colorama
