@@ -42,6 +42,8 @@ def main():
                       help='provide ztp server ip')
   args = parser.parse_args()
 
+  print(f"{Fore.YELLOW}Fabric Initialization Assistant{Style.RESET_ALL}")
+
   fabric_type = validate_input("Enter fabric type (vc or ip): ", input_type=list,
                                cli_input=args.fabric_type, choices=['vc', 'ip'])
   if fabric_type == 'ip':
@@ -104,7 +106,6 @@ def main():
   hosts_sub_yml_switches = ansible_hosts['all']['children']['switches']
   for idx, host in enumerate(hosts):
     node_file = Path("./inventory/dc1/host_vars/" + host + ".yml")
-    print(f"{Fore.YELLOW}Ansible yaml file creator assistant{Style.RESET_ALL}")
     node_id = idx
     neighbor_node_id = 0 if node_id else 1
     vgw_local_index = node_id + 2

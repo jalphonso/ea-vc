@@ -21,6 +21,7 @@ def exit(msg):
   print('Quitting')
   sys.exit(1)
 
+
 def main():
   oper_choices = ["add_host", "delete_host", "add_vlan", "delete_vlan", "build_configs", "provision_ztp",
                   "push_change"]
@@ -30,49 +31,50 @@ def main():
 
   # Top level subparser
   subparsers = parser.add_subparsers(help='choose one of the positional arguments',
-                                     dest='{vlan,host,fabric,switch,ansible}')
+                                     dest='{vlan,host,ansible}')
 
   # 2nd level parsers
   parser_vlan = subparsers.add_parser('vlan')
   parser_host = subparsers.add_parser('host')
-  parser_fabric = subparsers.add_parser('fabric')
-  parser_switch = subparsers.add_parser('switch')
   parser_ansible = subparsers.add_parser('ansible')
 
   # 2nd level subparsers
   subparsers_vlan = parser_vlan.add_subparsers(help='choose one of the positional arguments', dest='{add,del}')
   subparsers_host = parser_host.add_subparsers(help='choose one of the positional arguments', dest='{add,del}')
-  subparsers_fabric = parser_fabric.add_subparsers(help='choose one of the positional arguments', dest='{add,del}')
+  subparsers_ansible = parser_ansible.add_subparsers(
+    help='choose one of the positional arguments', dest='{build,push,ztp}')
 
   # required must be set to True and each subparser must have a dest to make sub commands mandatory
   subparsers.required = True
   subparsers_vlan.required = True
   subparsers_host.required = True
-  subparsers_fabric.required = True
+  subparsers_ansible.required = True
 
   # 3rd level parsers
   parser_vlan_add = subparsers_vlan.add_parser('add')
   parser_vlan_delete = subparsers_vlan.add_parser('del')
   parser_host_add = subparsers_host.add_parser('add')
   parser_host_delete = subparsers_host.add_parser('del')
-  parser_fabric_add = subparsers_fabric.add_parser('add')
-  parser_fabric_delete = subparsers_fabric.add_parser('del')
+  parser_ansible_build = subparsers_ansible.add_parser('build')
+  parser_ansible_push = subparsers_ansible.add_parser('push')
+  parser_ansible_ztp = subparsers_ansible.add_parser('ztp')
 
   # Parser function associations (Sets function to be called per parser)
   parser_vlan_add.set_defaults(func=vlan_actions.add_vlan)
   parser_vlan_delete.set_defaults(func=vlan_actions.delete_vlan)
   parser_host_add.set_defaults(func=host_actions.add_host)
   parser_host_delete.set_defaults(func=host_actions.delete_host)
-  parser_fabric_add.set_defaults(func=fabric_actions.add_fabric)
-  parser_fabric_delete.set_defaults(func=fabric_actions.delete_fabric)
+  parser_ansible_build.set_defaults(func=ansible_actions.build_configs)
+  parser_ansible_push.set_defaults(func=ansible_actions.push_change)
+  parser_ansible_ztp.set_defaults(func=ansible_actions.provision_ztp)
 
   # 3rd level vlan parser arguments
-  parser_vlan_add.add_argument('--vlan_id', dest='vlan_id', metavar='<vlan_id(s)>', nargs='+',
+  parser_vlan_add.add_argument('--vlan-id', dest='vlan_id', metavar='<vlan_id(s)>', nargs='+',
                                help='provide one or more vlan_id(s)')
-  parser_vlan_add.add_argument('--vlan_name', dest='vlan_name', metavar='<vlan_name(s)>', nargs='+',
+  parser_vlan_add.add_argument('--vlan-name', dest='vlan_name', metavar='<vlan_name(s)>', nargs='+',
                                help='provide one or more vlan_name(s) (must have one for each vlan_id)')
 
-  parser_vlan_delete.add_argument('--vlan_id', dest='vlan_id', metavar='<vlan_id>', nargs='+',
+  parser_vlan_delete.add_argument('--vlan-id', dest='vlan_id', metavar='<vlan_id>', nargs='+',
                                   help='provide one or more vlan_id(s)')
 
   # Setup mutually exclusive argument groups for host parser
@@ -90,7 +92,7 @@ def main():
   parser_host_add.add_argument('--int', dest='interface', metavar='<interface>', nargs='+',
                                help='provide one or more interface name(s)')
   group_int_desc.add_argument('--int-desc', dest='interface_description', metavar='<interface_description>',
-                              help='provide interface description')
+                              nargs='+', help='provide interface description')
   group_int_desc.add_argument('--no-int-desc', dest='interface_description', metavar='<interface_description>',
                               help='provide interface description')
   parser_host_add.add_argument('--ae', dest='ae', metavar='<ae>',
@@ -124,28 +126,30 @@ def main():
                                help='set lacp to active if lacp is enabled for host')
   group_lacp_mode.add_argument('--lacp-passive', dest='lacp_active', action='store_false', default=None,
                                help='set lacp to active if lacp is enabled for host')
-  parser_fabric_add.add_argument('--name', dest='fabric', metavar='<fabric name>',
-                                 help='set lacp to active if lacp is enabled for host')
   parser_vlan_add.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
-                               help='set lacp to active if lacp is enabled for host')
+                               help='specify fabric  name')
   parser_vlan_delete.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
-                               help='set lacp to active if lacp is enabled for host')
+                                  help='specify fabric  name')
   parser_host_add.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
-                               help='set lacp to active if lacp is enabled for host')
+                               help='specify fabric  name')
   parser_host_delete.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
-                               help='set lacp to active if lacp is enabled for host')
+                                  help='specify fabric  name')
+  parser_ansible_build.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
+                                    help='specify fabric  name')
+  parser_ansible_push.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
+                                    help='specify fabric  name')
+  parser_ansible_ztp.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
+                                    help='specify fabric  name')
   args = parser.parse_args()
   print(f"{Fore.YELLOW}Fabric Management Assistant{Style.RESET_ALL}")
 
-  fabric_name = validate_input("Enter fabric name: ", cli_input=args.fabric_name)
+  fabric_name = validate_input("Enter fabric name: ", cli_input=args.fabric)
   fabric_file = Path("./inventory/dc1/group_vars/" + fabric_name + ".yml")
 
   try:
-    with open(fabric_file) as f:
-      vc = yaml.load(f)
-      args.func(args, vc)
-    with open(fabric_file, 'w') as f:
-      yaml.dump(vc, f)
+    vc = yaml.load(fabric_file)
+    args.func(args, vc)
+    yaml.dump(vc, fabric_file)
   except FileNotFoundError as e:
     exit(e)
   except exceptions.UnEqualCorrespondingArgs as e:
@@ -156,6 +160,7 @@ def main():
     exit(e)
   except AttributeError:
     exit("Feature has probably not been implemented yet")
+
 
 if __name__ == '__main__':
   main()

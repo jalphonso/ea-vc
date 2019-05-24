@@ -38,7 +38,7 @@ def add_host(args, vc):
     description = validate_input("Enter interface description: ", cli_input=description)
     host_interface_yml = {
       'name': interface,
-      'description': description,
+      'description': description if description.strip() else None,
       'tag': hostname
     }
     if lag:
@@ -47,11 +47,11 @@ def add_host(args, vc):
       host_interface_yml['vlan'] = list(vlans)
       if jumbo:
         host_interface_yml['mtu'] = 9216
-    add_unique_interface(vc['host_interfaces'], host_interface_yml)
+      host_interface_yml['trunk'] = trunk
 
+    add_unique_interface(vc['host_interfaces'], host_interface_yml)
   # Build Interface definition(s)
-  if args.interface and args.interface_description:
-    if len(args.interface) == len(args.interface_description):
+  if args.interface and args.interface_description and len(args.interface) == len(args.interface_description):
       for idx, interface_name in enumerate(args.interface):
         build_interface(interface_name, args.interface_description[idx])
   elif args.interface:
@@ -69,7 +69,7 @@ def add_host(args, vc):
   if lag:
     ae_interface = {
       'name': "ae" + str(ae),
-      'description': ae_description,
+      'description': ae_description if ae_description.strip() else None,
       'esi': True,
       'vlan': list(vlans),
       'tag': hostname
@@ -79,8 +79,7 @@ def add_host(args, vc):
     if lacp:
       ae_interface['lacp'] = {}
       ae_interface['lacp']['active'] = lacp_active
-    if trunk:
-      ae_interface['trunk'] = True
+    ae_interface['trunk'] = trunk
     add_unique_interface(vc['host_interfaces'], ae_interface)
 
   vc['host_interfaces'] = sorted(vc['host_interfaces'], key=lambda x: x['name'])
