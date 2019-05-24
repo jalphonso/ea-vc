@@ -7,12 +7,14 @@ class Host(object):
   Host class represents yaml config for host
   """
 
-  def __init__(self, vgw_local_index, mgmt_default_gw, serial):
+  def __init__(self, vgw_local_index, mgmt_default_gw, serial, image, role):
     self.system_interfaces = []
     self.mgmt_interfaces = []
     self.vgw_local_index = vgw_local_index
     self.mgmt_default_gw = mgmt_default_gw
     self.serial = serial
+    self.image = image
+    self.role = role
 
   def __repr__(self):
     return str(self.host)
@@ -36,6 +38,22 @@ class Host(object):
   @serial.setter
   def serial(self, serial):
     self._serial = serial
+
+  @property
+  def image(self):
+    return self._image
+
+  @image.setter
+  def image(self, image):
+    self._image = image
+
+  @property
+  def role(self):
+    return self._role
+
+  @role.setter
+  def role(self, role):
+    self._role = role
 
   @property
   def vgw_local_index(self):
@@ -87,6 +105,8 @@ class Host(object):
   def host(self):
     self._host = {
       'serial': self.serial,
+      'image': self.image,
+      'role': self.role,
       'vgw_local_index': self.vgw_local_index,
       'bgp': self.bgp,
       'mgmt_interface': self.mgmt_interfaces,

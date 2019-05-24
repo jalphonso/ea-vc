@@ -2,9 +2,6 @@ import argparse
 import ruamel.yaml
 import sys
 from colorama import Fore, Style
-from host import Host
-from netaddr import IPAddress, IPNetwork
-from netaddr.core import AddrFormatError
 from lib.actions import ansible as ansible_actions
 from lib.actions import fabric as fabric_actions
 from lib.actions import host as host_actions
@@ -12,11 +9,17 @@ from lib.actions import switch as switch_actions
 from lib.actions import vlan as vlan_actions
 from lib.exceptions import exceptions
 from lib.utils.validate import validate_input
+from pathlib import Path
 
 yaml = ruamel.yaml.YAML()
 yaml.indent(sequence=4, offset=2)
 yaml.explicit_start = True
 
+
+def exit(msg):
+  print(msg)
+  print('Quitting')
+  sys.exit(1)
 
 def main():
   oper_choices = ["add_host", "delete_host", "add_vlan", "delete_vlan", "build_configs", "provision_ztp",
@@ -125,36 +128,34 @@ def main():
                                  help='set lacp to active if lacp is enabled for host')
   parser_vlan_add.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
                                help='set lacp to active if lacp is enabled for host')
-
+  parser_vlan_delete.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
+                               help='set lacp to active if lacp is enabled for host')
+  parser_host_add.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
+                               help='set lacp to active if lacp is enabled for host')
+  parser_host_delete.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
+                               help='set lacp to active if lacp is enabled for host')
   args = parser.parse_args()
   print(f"{Fore.YELLOW}Fabric Management Assistant{Style.RESET_ALL}")
 
-  vc_file = "./inventory/dc1/group_vars/vc.yml"
+  fabric_name = validate_input("Enter fabric name: ", cli_input=args.fabric_name)
+  fabric_file = Path("./inventory/dc1/group_vars/" + fabric_name + ".yml")
+
   try:
-    with open(vc_file) as f:
+    with open(fabric_file) as f:
       vc = yaml.load(f)
       args.func(args, vc)
-    with open(vc_file, 'w') as f:
+    with open(fabric_file, 'w') as f:
       yaml.dump(vc, f)
-  except FileNotFoundError:
-    print("Initializing VC file, please run again")
-    try:
-      with open(vc_file, 'w') as f:
-        yaml.dump({'host_interfaces': [], 'vlans': []}, f)
-    except:
-      print("Error creating VC file")
+  except FileNotFoundError as e:
+    exit(e)
   except exceptions.UnEqualCorrespondingArgs as e:
-    print(e)
-    print("Quitting...")
+    exit(e)
   except exceptions.InterfaceAlreadyExists as e:
-    print(e)
-    print("Quitting...")
+    exit(e)
   except exceptions.VlanAlreadyExists as e:
-    print(e)
-    print("Quitting...")
+    exit(e)
   except AttributeError:
-    print("Feature has probably not been implemented yet")
-
+    exit("Feature has probably not been implemented yet")
 
 if __name__ == '__main__':
   main()
