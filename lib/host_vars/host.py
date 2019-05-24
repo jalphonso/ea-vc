@@ -7,11 +7,12 @@ class Host(object):
   Host class represents yaml config for host
   """
 
-  def __init__(self, vgw_local_index, mgmt_default_gw):
+  def __init__(self, vgw_local_index, mgmt_default_gw, serial):
     self.system_interfaces = []
     self.mgmt_interfaces = []
     self.vgw_local_index = vgw_local_index
     self.mgmt_default_gw = mgmt_default_gw
+    self.serial = serial
 
   def __repr__(self):
     return str(self.host)
@@ -27,6 +28,14 @@ class Host(object):
   def mgmt_default_gw(self, mgmt_default_gw):
     if type(mgmt_default_gw) == IPAddress:
       self._mgmt_default_gw = mgmt_default_gw
+
+  @property
+  def serial(self):
+    return self._serial
+
+  @serial.setter
+  def serial(self, serial):
+    self._serial = serial
 
   @property
   def vgw_local_index(self):
@@ -77,6 +86,7 @@ class Host(object):
   @property
   def host(self):
     self._host = {
+      'serial': self.serial,
       'vgw_local_index': self.vgw_local_index,
       'bgp': self.bgp,
       'mgmt_interface': self.mgmt_interfaces,
