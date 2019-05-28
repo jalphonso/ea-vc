@@ -1,5 +1,6 @@
 {% call junos.stanza() %}
 lldp {
+    port-id-subtype interface-name;
     interface all;
     interface em0 {
         disable;
