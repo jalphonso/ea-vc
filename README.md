@@ -2,7 +2,7 @@
 
 *Requires Python 3.6+, PyEZ (junos-eznc) 2.2.1, Ansible 2.7+*
 *Requires Ansible Galaxy module: Juniper.junos 2.1 https://galaxy.ansible.com/Juniper/junos*
-*See requirements.txt for required Pip packages*
+*See [requirements.txt](requirements.txt) for required Pip packages*
 
 ## Setup
 ```
