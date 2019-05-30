@@ -1,6 +1,5 @@
 import argparse
 import ruamel.yaml
-import sys
 from colorama import Fore, Style
 from lib.actions import ansible as ansible_actions
 from lib.actions import fabric as fabric_actions
@@ -8,18 +7,13 @@ from lib.actions import host as host_actions
 from lib.actions import switch as switch_actions
 from lib.actions import vlan as vlan_actions
 from lib.exceptions import exceptions
+from lib.utils.exit import exit
 from lib.utils.validate import validate_input
 from pathlib import Path
 
 yaml = ruamel.yaml.YAML()
 yaml.indent(sequence=4, offset=2)
 yaml.explicit_start = True
-
-
-def exit(msg):
-  print(msg)
-  print('Quitting')
-  sys.exit(1)
 
 
 def main():
@@ -137,9 +131,9 @@ def main():
   parser_ansible_build.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
                                     help='specify fabric  name')
   parser_ansible_push.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
-                                    help='specify fabric  name')
+                                   help='specify fabric  name')
   parser_ansible_ztp.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
-                                    help='specify fabric  name')
+                                  help='specify fabric  name')
   args = parser.parse_args()
   print(f"{Fore.YELLOW}Fabric Management Assistant{Style.RESET_ALL}")
 
