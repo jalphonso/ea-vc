@@ -93,8 +93,8 @@ def main():
 
   try:
     ansible_hosts = yaml.load(ansible_hosts_file)
-  except:
-    exit("Unable to load ansible hosts file")
+  except FileNotFoundError:
+    ansible_hosts = None
 
   for idx, host in enumerate(hosts):
     node_file = Path("./inventory/dc1/host_vars/" + host + ".yml")
@@ -112,11 +112,13 @@ def main():
     mgmt_default_gw = mgmt_ip[1]
 
     ztp_subnet = 'subnet_' + str(mgmt_ip.ip).split('.')[2]
+    ztp_subnets = None
 
     try:
-      ztp_subnets = ansible_hosts['all']['vars']['ztp_subnets']
+      if ansible_hosts:
+        ztp_subnets = ansible_hosts['all']['vars']['ztp_subnets']
     except (TypeError,KeyError) as e:
-      ztp_subnets = None
+      pass
 
     if ztp_subnets is None:
       ztp_subnets = []
