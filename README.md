@@ -9,7 +9,9 @@ more examples:
 
 Added Python CLI to build out yaml files. Still a WIP.
 
-*Requires Python 3.6*
+*Requires Python 3.6+, PyEZ (junos-eznc) 2.2.1, Ansible 2.7+*
+*Requires Ansible Galaxy module: Juniper.junos 2.1 https://galaxy.ansible.com/Juniper/junos*
+*See requirements.txt for required Pip packages*
 
 ## Setup
 ```
