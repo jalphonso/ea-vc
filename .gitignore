@@ -7,3 +7,7 @@ source_configs/
 output/
 .vscode/
 __pycache__/
+inventory/
+configs/
+.venv/
+venv/

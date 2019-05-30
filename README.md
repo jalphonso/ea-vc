@@ -11,6 +11,15 @@ Added Python CLI to build out yaml files. Still a WIP.
 
 *Requires Python 3.6*
 
+## Setup
+```
+mkdir configs
+mkdir -p inventory/dc1/group_vars inventory/dc1/host_vars
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+```
+
 ## Initialize switch with command line options
 ```
 python initialize_switch.py -h

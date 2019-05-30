@@ -1,12 +1,13 @@
 import argparse
 import ruamel.yaml
-import sys
 from colorama import Fore, Style
 from lib.host_vars.host import Host
 from netaddr import IPAddress, IPNetwork
 from netaddr.core import AddrFormatError
 from ruamel.yaml.scalarstring import DoubleQuotedScalarString as dq
 from lib.utils.validate import validate_input
+from lib.utils.update import update
+from lib.utils.exit import exit
 from lib.utils.unique import is_list_unique
 from pathlib import Path
 from lib.exceptions.exceptions import UnEqualCorrespondingArgs
@@ -14,12 +15,6 @@ from lib.exceptions.exceptions import UnEqualCorrespondingArgs
 yaml = ruamel.yaml.YAML()
 yaml.indent(sequence=4, offset=2)
 yaml.explicit_start = True
-
-
-def exit(msg):
-  print(msg)
-  print('Quitting')
-  sys.exit(1)
 
 
 def main():
@@ -101,12 +96,6 @@ def main():
   except:
     exit("Unable to load ansible hosts file")
 
-  try:
-    ansible_hosts['all']['children']['all_vcs']['children'][fabric_name] = {'hosts': {}}
-  except:
-    ansible_hosts['all']['children']['all_vcs']['children'] = {fabric_name: {'hosts': {}}}
-  hosts_sub_yml_fabric = ansible_hosts['all']['children']['all_vcs']['children'][fabric_name]['hosts']
-  hosts_sub_yml_switches = ansible_hosts['all']['children']['switches']
   for idx, host in enumerate(hosts):
     node_file = Path("./inventory/dc1/host_vars/" + host + ".yml")
     node_id = idx
@@ -121,27 +110,69 @@ def main():
     image = validate_input(f"Enter image for host {host}: ",
                            cli_input=args.image[idx] if args.image else None)
     mgmt_default_gw = mgmt_ip[1]
-    ztp_subnet = 'subnet_' + str(mgmt_ip.ip)[2]
-    try:
-      ansible_hosts['all']['children'][ztp_subnet]['hosts'].update({host: None})
-    except (AttributeError, KeyError):
-      ansible_hosts['all']['children'][ztp_subnet] = {'hosts': {host: None}}
+
+    ztp_subnet = 'subnet_' + str(mgmt_ip.ip).split('.')[2]
 
     try:
       ztp_subnets = ansible_hosts['all']['vars']['ztp_subnets']
-      if ztp_subnets is None:
-        ztp_subnets = []
-      if ztp_subnet not in ztp_subnets:
-        ztp_subnets.append(ztp_subnet)
-    except Exception as e:
-      exit(e)
+    except (TypeError,KeyError) as e:
+      ztp_subnets = None
 
-    try:
-      hosts_sub_yml_switches['hosts'].update({host: None})
-    except (AttributeError, KeyError):
-      hosts_sub_yml_switches = {'hosts': {host: None}}
+    if ztp_subnets is None:
+      ztp_subnets = []
+    if ztp_subnet not in ztp_subnets:
+      ztp_subnets.append(ztp_subnet)
 
-    hosts_sub_yml_fabric.update({host: {'ansible_host': str(mgmt_ip.ip)}})
+    new_host = {
+      'all':
+      {
+        'vars':
+        {
+          'ztp_subnets': ztp_subnets
+        },
+        'children':
+        {
+          'all_vcs':
+          {
+            'children':
+            {
+              fabric_name:
+              {
+                'hosts':
+                {
+                  host:
+                  {
+                    'ansible_host': str(mgmt_ip.ip)
+                  }
+                },
+                'vars':
+                {
+                  'ztp_server': str(ztp_server_ip)
+                }
+              }
+            }
+          },
+          ztp_subnet:
+          {
+            'hosts':
+            {
+              host: None
+            }
+          },
+          'switches':
+          {
+            'hosts':
+            {
+              host: None
+            }
+          }
+        }
+      }
+    }
+    if ansible_hosts:
+      update(ansible_hosts, new_host)
+    else:
+      ansible_hosts = new_host
 
     underlay_asn = "65535.6550" + str(node_id)
     neighbor_underlay_asn = "65535.6550" + str(neighbor_node_id)
