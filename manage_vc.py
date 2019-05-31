@@ -2,9 +2,7 @@ import argparse
 import ruamel.yaml
 from colorama import Fore, Style
 from lib.actions import ansible as ansible_actions
-from lib.actions import fabric as fabric_actions
 from lib.actions import host as host_actions
-from lib.actions import switch as switch_actions
 from lib.actions import vlan as vlan_actions
 from lib.exceptions import exceptions
 from lib.utils.exit import exit
@@ -132,6 +130,10 @@ def main():
                                     help='specify fabric  name')
   parser_ansible_push.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
                                    help='specify fabric  name')
+  parser_ansible_push.add_argument('--user', dest='user', metavar='<username>',
+                                   help='specify network device username')
+  parser_ansible_push.add_argument('--pass', dest='passwd', metavar='<password>',
+                                   help='specify network device password')
   parser_ansible_ztp.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
                                   help='specify fabric  name')
   args = parser.parse_args()

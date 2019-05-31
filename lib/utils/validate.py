@@ -1,6 +1,7 @@
 import sys
 from netaddr import IPAddress, IPNetwork
 from netaddr.core import AddrFormatError
+from getpass import getpass
 
 
 def validate_input(prompt, input_type=str, input_min=None, input_max=None, cli_input=None, default=None, choices=None):
@@ -16,7 +17,21 @@ def validate_input(prompt, input_type=str, input_min=None, input_max=None, cli_i
     prompt = prompt + "[" + str(print_default) + "]: "
   while True and tries < max_tries:
     if cli_input is None:
-      user_input = input(prompt).strip()
+      if input_type == "password":
+        passwd = getpass(prompt).strip()
+        if passwd:
+          passwd_confirm = getpass("Confirm your password: ").strip()
+          if passwd == passwd_confirm:
+            user_input = passwd
+            break
+          else:
+            print("Passwords do not match, please try again...")
+            continue
+        else:
+          print("Password cannot be blank, please try again...")
+          continue
+      else:
+        user_input = input(prompt).strip()
     else:
       user_input = cli_input
       cli_input = None

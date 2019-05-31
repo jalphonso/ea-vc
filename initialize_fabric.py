@@ -83,10 +83,10 @@ def main():
     exit('Fabric type VC only supports 2 members')
 
   ztp_server_ip = str(validate_input(f"Enter ZTP Server IP Address x.x.x.x: ", "IPAddress",
-                                 cli_input=args.ztp_server_ip))
+                                     cli_input=args.ztp_server_ip))
   ztp_group = "ztp_group_" + ztp_server_ip.replace(".", "_")
 
-  fabric_data = {'ztp_server_ip': ztp_server_ip, 'ztp_group': ztp_group,
+  fabric_data = {'fabric_name': fabric_name, 'ztp_server_ip': ztp_server_ip, 'ztp_group': ztp_group,
                  'subnets': [], 'host_interfaces': [], 'vlans': []}
 
   try:

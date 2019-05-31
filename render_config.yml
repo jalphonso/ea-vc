@@ -1,6 +1,6 @@
 ---
 
-- hosts: all_vcs
+- hosts: "{{ fabric }}"
   connection: local
   gather_facts: no
   tasks:

@@ -1,40 +1,36 @@
 ---
 
-- hosts: all_vcs
-  connection: netconf
+- hosts: "{{ fabric }}"
+  connection: local
   gather_facts: no
   roles:
     - Juniper.junos
-  # tasks:
-  # - name: Get Junos Facts
-  #   juniper_junos_facts:
-  #     host: "{{ ansible_host }}"
-  #   register: facts
+  tasks:
+  - set_fact:
+      config_style: "VLAN_L2NG"
+      config_path: "configs/{{ inventory_hostname }}.conf"
+      template_path: templates/vc.j2
 
-  # - set_fact:
-  #     config_style: "{{ facts['ansible_facts']['junos']['switch_style'] }}"
-  #     config_path: "configs/{{ inventory_hostname }}.conf"
-  #     template_path: templates/vc.j2
+  - name: Build config from template
+    template:
+      src: "{{ template_path }}"
+      dest: "{{ config_path }}"
 
-  # - name: Build config from template
-  #   template:
-  #     src: "{{ template_path }}"
-  #     dest: "{{ config_path }}"
+  - name: Deploy config to Junos devices
+    juniper_junos_config:
+      host: "{{ ansible_host }}"
+      load: override
+      src: "{{ config_path }}"
+      dest_dir: output
+      diff: true
+      check: true
+      commit: true
+      confirmed: 2
+      port: 830
+      timeout: 60
+    register: config_result
 
-  # - name: Deploy config to Junos devices
-  #   juniper_junos_config:
-  #     host: "{{ ansible_host }}"
-  #     load: override
-  #     src: "{{ config_path }}"
-  #     dest_dir: output
-  #     diff: true
-  #     check: true
-  #     commit: true
-  #     confirmed: 2
-  #     port: 830
-  #     timeout: 60
-  #   register: config_result
-
-  # - name: cat diffs_file
-  #   debug:
-  #     var: config_result.diff_lines
+  - name: cat diffs_file
+    debug:
+      var: config_result.diff_lines
+    when: config_result is changed
