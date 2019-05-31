@@ -1,4 +1,4 @@
-{% for host in groups['switches'] %}
+{% for host in groups[ztp_group]|sort() %}
 class "{{ hostvars[host]['serial'] }}" {
   match if option host-name = "{{ hostvars[host]['serial'] }}";
 }

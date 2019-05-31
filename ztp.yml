@@ -1,6 +1,6 @@
 ---
 
-- hosts: ztp_servers
+- hosts: "{{ ztp_server }}"
   gather_facts: no
   become: true
   become_method: sudo

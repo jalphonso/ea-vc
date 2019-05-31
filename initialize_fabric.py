@@ -82,14 +82,12 @@ def main():
   if fabric_type == 'vc' and len(hosts) > 2:
     exit('Fabric type VC only supports 2 members')
 
-  ztp_server_ip = validate_input(f"Enter ZTP Server IP Address x.x.x.x: ", "IPAddress",
-                                 cli_input=args.ztp_server_ip)
+  ztp_server_ip = str(validate_input(f"Enter ZTP Server IP Address x.x.x.x: ", "IPAddress",
+                                 cli_input=args.ztp_server_ip))
+  ztp_group = "ztp_group_" + ztp_server_ip.replace(".", "_")
 
-  try:
-    yaml.dump({'ztp_server_ip': str(ztp_server_ip), 'host_interfaces': [], 'vlans': []}, fabric_file)
-  except Exception as e:
-    print(f"Error creating fabric group_vars file {fabric_file}")
-    exit(e)
+  fabric_data = {'ztp_server_ip': ztp_server_ip, 'ztp_group': ztp_group,
+                 'subnets': [], 'host_interfaces': [], 'vlans': []}
 
   try:
     ansible_hosts = yaml.load(ansible_hosts_file)
@@ -112,26 +110,12 @@ def main():
     mgmt_default_gw = mgmt_ip[1]
 
     ztp_subnet = 'subnet_' + str(mgmt_ip.ip).split('.')[2]
-    ztp_subnets = None
-
-    try:
-      if ansible_hosts:
-        ztp_subnets = ansible_hosts['all']['vars']['ztp_subnets']
-    except (TypeError,KeyError) as e:
-      pass
-
-    if ztp_subnets is None:
-      ztp_subnets = []
-    if ztp_subnet not in ztp_subnets:
-      ztp_subnets.append(ztp_subnet)
+    if ztp_subnet not in fabric_data['subnets']:
+      fabric_data['subnets'].append(ztp_subnet)
 
     new_host = {
       'all':
       {
-        'vars':
-        {
-          'ztp_subnets': ztp_subnets
-        },
         'children':
         {
           'all_vcs':
@@ -146,26 +130,21 @@ def main():
                   {
                     'ansible_host': str(mgmt_ip.ip)
                   }
-                },
-                'vars':
-                {
-                  'ztp_server': str(ztp_server_ip)
                 }
               }
             }
           },
-          ztp_subnet:
+          ztp_group:
           {
-            'hosts':
+            'children':
             {
-              host: None
-            }
-          },
-          'switches':
-          {
-            'hosts':
-            {
-              host: None
+              ztp_subnet:
+              {
+                'hosts':
+                {
+                  host: None
+                }
+              }
             }
           }
         }
@@ -237,6 +216,12 @@ def main():
     yaml.dump(ansible_hosts, ansible_hosts_file)
   except Exception as e:
     print("Error writing to ansible hosts file")
+    exit(e)
+
+  try:
+    yaml.dump(fabric_data, fabric_file)
+  except Exception as e:
+    print(f"Error creating fabric group_vars file {fabric_file}")
     exit(e)
 
 
