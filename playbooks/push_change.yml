@@ -24,13 +24,11 @@
       dest_dir: output
       diff: true
       check: true
-      commit: true
-      confirmed: 2
+      commit: false
       port: 830
       timeout: 60
-    register: config_result
+    register: pre_commit_result
 
-  - name: cat diffs_file
-    debug:
-      var: config_result.diff_lines
-    when: config_result is changed
+  - name: proceed with config changes if needed
+    import_tasks: commit_confirmed_tasks.yml
+    when: pre_commit_result is changed

@@ -5,7 +5,7 @@ import os
 
 def build_configs(args, vc):
   fabric = vc['fabric_name']
-  subprocess.call(['ansible-playbook', '-i', 'inventory/dc1', '-e', f"fabric={fabric}", 'render_config.yml'])
+  subprocess.call(['ansible-playbook', '-i', 'inventory/dc1', '-e', f"fabric={fabric}", 'render_config.yml'], cwd='playbooks')
 
 
 def push_change(args, vc):
@@ -21,7 +21,7 @@ def push_change(args, vc):
 
   subprocess.call(['ansible-playbook', '-i', 'inventory/dc1', '-e',
                    f"fabric={fabric}", '-e', f"ansible_python_interpreter={remote_python_interpreter}",
-                   'push_change.yml'], env=env)
+                   'push_change.yml'], env=env, cwd='playbooks')
 
 
 def provision_ztp(args, vc):
@@ -30,4 +30,4 @@ def provision_ztp(args, vc):
   ztp_group = vc['ztp_group']
   subprocess.call(['ansible-playbook', '-i', 'inventory/dc1', '-i', f"{ztp_server},",
                    '-e', f"ztp_server={ztp_server}", '-e', f"ztp_group={ztp_group}",
-                   '-e', "{ztp_subnets: %s}" % format(ztp_subnets), 'ztp.yml'])
+                   '-e', "{ztp_subnets: %s}" % format(ztp_subnets), 'ztp.yml'], cwd='playbooks')

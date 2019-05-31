@@ -6,8 +6,7 @@
 
 ## Setup
 ```
-mkdir configs
-mkdir -p inventory/dc1/group_vars inventory/dc1/host_vars
+mkdir output
 python3 -m venv .venv
 . .venv/bin/activate
 pip install -r requirements.txt
