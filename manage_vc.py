@@ -15,9 +15,6 @@ yaml.explicit_start = True
 
 
 def main():
-  oper_choices = ["add_host", "delete_host", "add_vlan", "delete_vlan", "build_configs", "provision_ztp",
-                  "push_change"]
-
   # Top level parser
   parser = argparse.ArgumentParser(description='Execute operation(s)')
 
