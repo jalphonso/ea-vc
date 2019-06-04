@@ -1,5 +1,5 @@
 from lib.exceptions import exceptions
-from lib.utils.unique import add_unique_interface
+from lib.utils.unique import add_unique_interface, is_list_unique, host_is_unique_or_error
 from lib.utils.validate import validate_input
 
 import sys
@@ -8,7 +8,11 @@ import sys
 def add_host(args, vc):
   # Initial questions
   vlans = []
-  hostname = validate_input("Enter hostname of end device: ", cli_input=args.hostname)
+  hostname = validate_input("hostname (tag) of end device (this is used to group interfaces)\n"
+                            "If this host has more than one interface group then name it accordingly\n"
+                            "i.e. hostname-mgmt or hostname-data\n"
+                            "Enter hostname/interface group tag: ", cli_input=args.hostname)
+  host_is_unique_or_error(vc['host_interfaces'], hostname, vc['fabric_name'])
   trunk = validate_input("Is this host trunking Vlans? (y or n): ", bool, default=True, cli_input=args.trunk)
   jumbo = validate_input("Enable Jumbo Frames? (y or n): ", bool, default=True, cli_input=args.jumbo)
   lag = validate_input("Is this host using multiple interfaces in a lag? (y or n): ",
@@ -52,8 +56,8 @@ def add_host(args, vc):
     add_unique_interface(vc['host_interfaces'], host_interface_yml)
   # Build Interface definition(s)
   if args.interface and args.interface_description and len(args.interface) == len(args.interface_description):
-      for idx, interface_name in enumerate(args.interface):
-        build_interface(interface_name, args.interface_description[idx])
+    for idx, interface_name in enumerate(args.interface):
+      build_interface(interface_name, args.interface_description[idx])
   elif args.interface:
     for interface_name in args.interface:
       build_interface(interface_name)
@@ -87,4 +91,7 @@ def add_host(args, vc):
 
 def delete_host(args, vc):
   hostname = validate_input("Enter hostname of end device: ", cli_input=args.hostname)
+  hosts = [h['tag'] for h in vc['host_interfaces']]
+  if hostname not in hosts:
+    raise exceptions.HostDoesNotExist(f"Host {hostname} does not exist in fabric {vc['fabric_name']}")
   vc['host_interfaces'][:] = [x for x in vc['host_interfaces'] if x['tag'] != hostname]

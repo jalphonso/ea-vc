@@ -1,8 +1,13 @@
+from colorama import Fore, Style
+
+
 class FabricError(Exception):
   """
   baseclass for all exceptions
   """
-  pass
+  def __init__(self, message):
+    message = f"{Fore.RED}" + message + f"{Style.RESET_ALL}"
+    super().__init__(message)
 
 
 class InterfaceAlreadyExists(FabricError):
@@ -16,5 +21,15 @@ class VlanAlreadyExists(FabricError):
 
 
 class UnEqualCorrespondingArgs(FabricError):
+  def __init__(self, message):
+    super().__init__(message)
+
+
+class HostAlreadyExists(FabricError):
+  def __init__(self, message):
+    super().__init__(message)
+
+
+class HostDoesNotExist(FabricError):
   def __init__(self, message):
     super().__init__(message)

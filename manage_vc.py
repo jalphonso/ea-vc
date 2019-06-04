@@ -146,11 +146,7 @@ def main():
     print(f"{Fore.YELLOW}Operation {args.func.__name__} Complete!{Style.RESET_ALL}")
   except FileNotFoundError as e:
     exit(e)
-  except exceptions.UnEqualCorrespondingArgs as e:
-    exit(e)
-  except exceptions.InterfaceAlreadyExists as e:
-    exit(e)
-  except exceptions.VlanAlreadyExists as e:
+  except exceptions.FabricError as e:
     exit(e)
   except AttributeError:
     exit("Feature has probably not been implemented yet")
