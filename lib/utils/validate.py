@@ -1,3 +1,4 @@
+import re
 import sys
 from netaddr import IPAddress, IPNetwork
 from netaddr.core import AddrFormatError
@@ -92,6 +93,12 @@ def validate_input(prompt, input_type=str, input_min=None, input_max=None, cli_i
         break
       except (ValueError, AddrFormatError) as e:
         print(e)
+    elif input_type == 'Interface':
+      if re.match(r"(ge|xe|et)-0/0/([0-4]\d|5[0-1])$", user_input):
+        break
+      else:
+        print("Interface format must be <type>-0/0/x where type is ge, xe, or et")
+        print("5120 model supported range is from 0/0/0 thru 0/0/51 for hosts")
     else:
       break
     tries += 1

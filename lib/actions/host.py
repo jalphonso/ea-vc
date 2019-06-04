@@ -34,7 +34,7 @@ def add_host(args, vc):
 
   # Private Interface Function
   def build_interface(interface_name=None, description=None):
-    interface = validate_input("Enter interface name: ", cli_input=interface_name)
+    interface = validate_input("Enter interface name: ", input_type='Interface', cli_input=interface_name)
     description = validate_input("Enter interface description: ", cli_input=description)
     host_interface_yml = {
       'name': interface,
