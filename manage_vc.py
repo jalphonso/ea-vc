@@ -143,6 +143,7 @@ def main():
     vc = yaml.load(fabric_file)
     args.func(args, vc)
     yaml.dump(vc, fabric_file)
+    print(f"{Fore.YELLOW}Operation {args.func.__name__} Complete!{Style.RESET_ALL}")
   except FileNotFoundError as e:
     exit(e)
   except exceptions.UnEqualCorrespondingArgs as e:

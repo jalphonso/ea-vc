@@ -224,6 +224,8 @@ def main():
     print(f"Error creating fabric group_vars file {fabric_file}")
     exit(e)
 
+  print(f"{Fore.YELLOW}Fabric {fabric_name} Initialization Complete!{Style.RESET_ALL}")
+
 
 if __name__ == '__main__':
   main()
