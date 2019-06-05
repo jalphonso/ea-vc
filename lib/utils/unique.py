@@ -14,11 +14,17 @@ def add_unique_interface(interface_list, new_interface):
 
 def add_unique_vlan(vlan_list, new_vlan):
   for d in vlan_list:
+    if d['name'] == new_vlan['name']:
+      raise exceptions.VlanAlreadyExists(
+        f"Cannot add new vlan named {new_vlan['name']} "
+        f"with vlan id {new_vlan['id']} because "
+        f"this vlan name already exists for vlan id {d['id']}"
+      )
     if d['id'] == new_vlan['id']:
       raise exceptions.VlanAlreadyExists(
-        f"Cannot add new vlan {new_vlan['name']} "
-        f"for vlan id {new_vlan['id']} because "
-        f"vlan already exists with name {d['name']}"
+        f"Cannot add new vlan named {new_vlan['name']} "
+        f"with vlan id {new_vlan['id']} because "
+        f"this id is already used by the vlan named {d['name']}"
       )
   vlan_list.append(new_vlan)
 

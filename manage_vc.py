@@ -63,8 +63,8 @@ def main():
   parser_vlan_add.add_argument('--vlan-name', dest='vlan_name', metavar='<vlan_name(s)>', nargs='+',
                                help='provide one or more vlan_name(s) (must have one for each vlan_id)')
 
-  parser_vlan_delete.add_argument('--vlan-id', dest='vlan_id', metavar='<vlan_id>', nargs='+',
-                                  help='provide one or more vlan_id(s)')
+  parser_vlan_delete.add_argument('--vlan-name', dest='vlan_name', metavar='<vlan_name>', nargs='+',
+                                  help='provide one or more vlan_name(s)')
 
   # Setup mutually exclusive argument groups for host parser
   group_trunk = parser_host_add.add_mutually_exclusive_group()
@@ -76,21 +76,22 @@ def main():
   group_int_desc = parser_host_add.add_mutually_exclusive_group()
 
   # 3rd level host parser arguments
-  parser_host_add.add_argument('--vlan-id', dest='vlan_id', metavar='<vlan_id>', nargs='+',
-                               help='provide one or more vlan_id(s)')
+  parser_host_add.add_argument('--vlan-name', dest='vlan_name', metavar='<vlan_name>', nargs='+',
+                               help='provide one or more vlan_name(s)')
   parser_host_add.add_argument('--int', dest='interface', metavar='<interface>', nargs='+',
                                help='provide one or more interface name(s)')
   group_int_desc.add_argument('--int-desc', dest='interface_description', metavar='<interface_description>',
                               nargs='+', help='provide interface description')
-  group_int_desc.add_argument('--no-int-desc', dest='interface_description', metavar='<interface_description>',
-                              help='provide interface description')
+  group_int_desc.add_argument('--no-int-desc', dest='interface_description', action='store_const',
+                              const=" ", metavar='<disable interface description>',
+                              help='disable interface description')
   parser_host_add.add_argument('--ae', dest='ae', metavar='<ae>',
                                help='provide ae id for host lag')
   group_ae_desc.add_argument('--ae-desc', dest='ae_description', metavar='<ae_description>',
                              help='provide ae description for host lag')
   group_ae_desc.add_argument('--no-ae-desc', dest='ae_description', action='store_const',
-                             const=" ", metavar='<ae_description>',
-                             help='provide ae description for host lag')
+                             const=" ", metavar='<disable ae interface description>',
+                             help='disable ae interface description')
   parser_host_add.add_argument('--hostname', dest='hostname', metavar='<hostname>',
                                help='provide hostname of end device')
   parser_host_delete.add_argument('--hostname', dest='hostname', metavar='<hostname>',
@@ -106,15 +107,15 @@ def main():
   group_lag.add_argument('--lag', dest='lag', action='store_true', default=None,
                          help='enable lag for host')
   group_lag.add_argument('--no-lag', dest='lag', action='store_false', default=None,
-                         help='enable lag for host')
+                         help='disable lag for host')
   group_lacp.add_argument('--lacp', dest='lacp', action='store_true', default=None,
                           help='enable lacp for host (only applies to lag)')
   group_lacp.add_argument('--no-lacp', dest='lacp', action='store_false', default=None,
-                          help='enable lacp for host (only applies to lag)')
+                          help='disable lacp for host (only applies to lag)')
   group_lacp_mode.add_argument('--lacp-active', dest='lacp_active', action='store_true', default=None,
                                help='set lacp to active if lacp is enabled for host')
   group_lacp_mode.add_argument('--lacp-passive', dest='lacp_active', action='store_false', default=None,
-                               help='set lacp to active if lacp is enabled for host')
+                               help='set lacp to passive if lacp is enabled for host')
   parser_vlan_add.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
                                help='specify fabric  name')
   parser_vlan_delete.add_argument('--fabric', dest='fabric', metavar='<fabric name>',

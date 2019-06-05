@@ -26,12 +26,21 @@ def add_host(args, vc):
                                    bool, default=True, cli_input=args.lacp_active)
 
   # Construct VLAN list
-  if args.vlan_id:
-    for vlan_id in args.vlan_id:
-      vlans.append(validate_input("Enter vlan id for host interface: ", int, 1, 4094, cli_input=vlan_id))
+  existing_vlans = [v['name'] for v in vc['vlans']]
+
+  def add_vlan_to_list(vlan_name=None):
+    new_vlan = validate_input("Enter vlan name for host interface: ", cli_input=vlan_name)
+    if new_vlan in existing_vlans:
+      vlans.append(new_vlan)
+    else:
+      raise exceptions.VlanDoesNotExist(f"VLAN named {new_vlan} does not exist. Add the VLAN to the fabric first.")
+
+  if args.vlan_name:
+    for vlan_name in args.vlan_name:
+      add_vlan_to_list(vlan_name)
   else:
     while True:
-      vlans.append(validate_input("Enter vlan id for host interface: ", int, 1, 4094))
+      add_vlan_to_list()
       if not trunk or not validate_input("Do you want to enter another vlan to this trunk? (y or n): ",
                                          bool, default=False):
         break

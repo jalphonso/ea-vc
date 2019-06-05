@@ -9,9 +9,9 @@ host_interfaces:
     description: Trunk to ESX127
     esi: true
     vlan:
-      - 100
-      - 200
-      - 999
+      - finance
+      - hr
+      - marketing
     tag: ESX127
     mtu: 9216
     lacp:
@@ -21,9 +21,9 @@ host_interfaces:
     description: Trunk to ESX127
     esi: true
     vlan:
-      - 100
-      - 200
-      - 999
+      - finance
+      - hr
+      - marketing
     tag: ESX113
     mtu: 9216
     lacp:
