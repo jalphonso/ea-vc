@@ -19,7 +19,7 @@
   - name: Deploy config to Junos devices
     juniper_junos_config:
       host: "{{ ansible_host }}"
-      load: override
+      load: update
       src: "{{ config_path }}"
       dest_dir: output
       diff: true
