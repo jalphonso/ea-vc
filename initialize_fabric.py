@@ -51,11 +51,44 @@ def main():
   if fabric_file.is_file():
     exit(f"Fabric with name '{fabric_name}' already exists.")
 
+  try:
+    ansible_hosts = yaml.load(ansible_hosts_file)
+  except FileNotFoundError:
+    ansible_hosts = None
+
+  # create list of all hosts, mgmt_ips, and sns for later use
+  all_hosts = []
+  all_mgmt_ips = []
+  all_sns = []
+  if ansible_hosts:
+    if 'all' in ansible_hosts:
+      ansible_all = ansible_hosts['all']
+      if 'children' in ansible_all:
+        children = ansible_all['children']
+        if 'all_vcs' in children:
+          all_vcs = children['all_vcs']
+          if 'children' in all_vcs:
+            all_vcs_children = all_vcs['children']
+            for vc, vc_val in all_vcs_children.items():
+              if 'hosts' in vc_val:
+                vc_hosts = vc_val['hosts']
+                for host, host_val in vc_hosts.items():
+                  all_hosts.append(host)
+                  if 'ansible_host' in host_val:
+                    all_mgmt_ips.append(IPAddress(host_val['ansible_host']))
+                  if 'serial_number' in host_val:
+                    all_sns.append(str(host_val['serial_number']))
+
   hosts = validate_input("Enter hostnames of fabric devices: ", cli_input=args.hosts)
   if not args.hosts:
     hosts = hosts.split()
   if not is_list_unique(hosts):
     exit('fabric device names must be unique')
+  host_set_diff = set(hosts) - set(all_hosts)
+  overlapping_hosts = set(hosts) - host_set_diff
+  if overlapping_hosts:
+    exit(f"The following device(s) are in use on another fabric: {sorted(list(overlapping_hosts))}\n"
+         f"Make sure device hostnames are unique and try again")
 
   try:
     if args.hosts:
@@ -89,22 +122,32 @@ def main():
   fabric_data = {'fabric_name': fabric_name, 'ztp_server_ip': ztp_server_ip, 'ztp_group': ztp_group,
                  'subnets': [], 'host_interfaces': [], 'vlans': []}
 
-  try:
-    ansible_hosts = yaml.load(ansible_hosts_file)
-  except FileNotFoundError:
-    ansible_hosts = None
-
   for idx, host in enumerate(hosts):
     node_file = Path("./inventory/dc1/host_vars/" + host + ".yml")
     node_id = idx
     neighbor_node_id = 0 if node_id else 1
     vgw_local_index = node_id + 2
-    serial = validate_input(f"Enter serial number for host {host}: ",
-                            cli_input=args.serial[idx] if args.serial else None)
+
+    while True:
+      serial = validate_input(f"Enter serial number for host {host}: ",
+                              cli_input=args.serial[idx] if args.serial else None)
+      if serial not in all_sns:
+        all_sns.append(serial)
+        break
+      print("Serial number is already in use, please check and enter the correct unique serial")
+
     role = validate_input(f"Enter role for host {host} (spine or leaf): ", input_type=list, choices=['spine', 'leaf'],
                           cli_input=args.role[idx] if args.role else None)
-    mgmt_ip = validate_input(f"Enter management IP for host '{host}' in CIDR format x.x.x.x/x: ", "IPNetwork",
-                             cli_input=args.mgmt_ip[idx] if args.mgmt_ip else None)
+
+    while True:
+      mgmt_ip = validate_input(f"Enter management IP for host '{host}' in CIDR format x.x.x.x/x: ", "IPNetwork",
+                               cli_input=args.mgmt_ip[idx] if args.mgmt_ip else None)
+      if mgmt_ip.ip not in all_mgmt_ips:
+        all_mgmt_ips.append(mgmt_ip.ip)
+        break
+      print("Mgmt IP is already in use, please check and enter the correct unique IP")
+
+
     image = validate_input(f"Enter image for host {host}: ",
                            cli_input=args.image[idx] if args.image else None)
     mgmt_default_gw = mgmt_ip[1]
@@ -128,7 +171,8 @@ def main():
                 {
                   host:
                   {
-                    'ansible_host': str(mgmt_ip.ip)
+                    'ansible_host': str(mgmt_ip.ip),
+                    'serial_number': serial
                   }
                 }
               }
