@@ -1,7 +1,7 @@
 ---
 fabric_name: vc1
-ztp_server_ip: 192.168.105.5
-ztp_group: ztp_group_192_168_105_5
+ztp_server_ip: 192.168.105.6
+ztp_group: ztp_group_192_168_105_6
 subnets:
   - subnet_105
 host_interfaces:
