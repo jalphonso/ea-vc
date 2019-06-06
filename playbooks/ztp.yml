@@ -12,14 +12,25 @@
       classes_template: "templates/isc-dhcp/classes.j2"
       subnet_template: "templates/isc-dhcp/subnet.j2"
       config_dir: "/etc/dhcp"
-      remote_config_dir: "/var/www/html/config/"
+      remote_config_dir: "{{  '/var/www/html/config/'
+                            if ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+                            else
+                              '/usr/share/nginx/html/config/'
+                          }}"
+      nginx_user: "{{ 'www-data'
+                    if ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+                    else
+                      'nginx'
+                   }}"
+  - set_fact:
+      nginx_group: "{{ nginx_user }}"
 
   - name: copy junos configs to ztp isc-dhcp-server
     copy:
       src: "{{ junos_config_path }}"
       dest: "{{ remote_config_dir }}"
-      owner: www-data
-      group: www-data
+      owner: "{{ nginx_user }}"
+      group: "{{ nginx_group }}"
       mode: 0644
 
   - name: Build dhcp classes config from template
