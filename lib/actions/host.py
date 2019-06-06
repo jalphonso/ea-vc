@@ -1,6 +1,8 @@
+from colorama import Fore, Style
 from lib.exceptions import exceptions
 from lib.utils.unique import add_unique_interface, is_list_unique, host_is_unique_or_error
 from lib.utils.validate import validate_input
+
 
 import sys
 
@@ -8,10 +10,10 @@ import sys
 def add_host(args, vc):
   # Initial questions
   vlans = []
-  hostname = validate_input("hostname (tag) of end device (this is used to group interfaces)\n"
-                            "If this host has more than one interface group then name it accordingly\n"
-                            "i.e. hostname-mgmt or hostname-data\n"
-                            "Enter hostname/interface group tag: ", cli_input=args.hostname)
+  hostname = validate_input(f"{Fore.YELLOW}\nHostname (tag) of end device (this is used to group interfaces)\n"
+                            f"If this host has more than one interface group then name it accordingly\n"
+                            f"  i.e. hostname-mgmt or hostname-data\n\n{Style.RESET_ALL}"
+                            f"Enter hostname/interface group tag: ", cli_input=args.hostname)
   host_is_unique_or_error(vc['host_interfaces'], hostname, vc['fabric_name'])
   trunk = validate_input("Is this host trunking Vlans? (y or n): ", bool, default=True, cli_input=args.trunk)
   jumbo = validate_input("Enable Jumbo Frames? (y or n): ", bool, default=True, cli_input=args.jumbo)

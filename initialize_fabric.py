@@ -134,7 +134,8 @@ def main():
       if serial not in all_sns:
         all_sns.append(serial)
         break
-      print("Serial number is already in use, please check and enter the correct unique serial")
+      print(f"{Fore.YELLOW}Serial number is already in use, please check and "
+            f"enter the correct unique serial{Style.RESET_ALL}")
 
     role = validate_input(f"Enter role for host {host} (spine or leaf): ", input_type=list, choices=['spine', 'leaf'],
                           cli_input=args.role[idx] if args.role else None)
@@ -145,8 +146,7 @@ def main():
       if mgmt_ip.ip not in all_mgmt_ips:
         all_mgmt_ips.append(mgmt_ip.ip)
         break
-      print("Mgmt IP is already in use, please check and enter the correct unique IP")
-
+      print(f"{Fore.YELLOW}Mgmt IP is already in use, please check and enter the correct unique IP{Style.RESET_ALL}")
 
     image = validate_input(f"Enter image for host {host}: ",
                            cli_input=args.image[idx] if args.image else None)
@@ -259,13 +259,13 @@ def main():
   try:
     yaml.dump(ansible_hosts, ansible_hosts_file)
   except Exception as e:
-    print("Error writing to ansible hosts file")
+    print(f"{Fore.RED}Error writing to ansible hosts file{Style.RESET_ALL}")
     exit(e)
 
   try:
     yaml.dump(fabric_data, fabric_file)
   except Exception as e:
-    print(f"Error creating fabric group_vars file {fabric_file}")
+    print(f"{Fore.RED}Error creating fabric group_vars file {fabric_file}{Style.RESET_ALL}")
     exit(e)
 
   print(f"{Fore.YELLOW}Fabric {fabric_name} Initialization Complete!{Style.RESET_ALL}")
