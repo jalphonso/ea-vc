@@ -39,7 +39,7 @@ def validate_input(prompt, input_type=str, input_min=None, input_max=None, cli_i
       cli_input = None
     if input_type == bool and type(user_input) == bool:
       break
-    elif not user_input:
+    elif user_input == "":
       if default is None:
         print(f"{Fore.YELLOW}Input cannot be blank, please try again{Style.RESET_ALL}")
       else:
