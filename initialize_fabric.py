@@ -4,6 +4,7 @@ from colorama import Fore, Style
 from lib.host_vars.host import Host
 from netaddr import IPAddress, IPNetwork
 from netaddr.core import AddrFormatError
+from pyfiglet import Figlet
 from ruamel.yaml.scalarstring import DoubleQuotedScalarString as dq
 from lib.utils.validate import validate_input
 from lib.utils.update import update
@@ -15,6 +16,8 @@ from lib.exceptions.exceptions import UnEqualCorrespondingArgs
 yaml = ruamel.yaml.YAML()
 yaml.indent(sequence=4, offset=2)
 yaml.explicit_start = True
+
+fig = Figlet(width=120)
 
 
 def main():
@@ -37,7 +40,7 @@ def main():
                       help='provide ztp server ip')
   args = parser.parse_args()
 
-  print(f"{Fore.YELLOW}Fabric Initialization Assistant{Style.RESET_ALL}")
+  print(f"{Fore.GREEN}" + fig.renderText("FABRIC ASSISTANT") + f"{Style.RESET_ALL}")
 
   fabric_type = validate_input("Enter fabric type (vc or ip): ", input_type=list,
                                cli_input=args.fabric_type, choices=['vc', 'ip'])

@@ -8,3 +8,4 @@ junos-eznc
 jxmlease
 ruamel.yaml
 colorama
+pyfiglet

@@ -8,10 +8,13 @@ from lib.exceptions import exceptions
 from lib.utils.exit import exit
 from lib.utils.validate import validate_input
 from pathlib import Path
+from pyfiglet import Figlet
 
 yaml = ruamel.yaml.YAML()
 yaml.indent(sequence=4, offset=2)
 yaml.explicit_start = True
+
+fig = Figlet(width=120)
 
 
 def main():
@@ -135,7 +138,8 @@ def main():
   parser_ansible_ztp.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
                                   help='specify fabric  name')
   args = parser.parse_args()
-  print(f"{Fore.YELLOW}Fabric Management Assistant{Style.RESET_ALL}")
+
+  print(f"{Fore.GREEN}" + fig.renderText("FABRIC MANAGER") + f"{Style.RESET_ALL}")
 
   fabric_name = validate_input("Enter fabric name: ", cli_input=args.fabric)
   fabric_file = Path("./inventory/dc1/group_vars/" + fabric_name + ".yml")
