@@ -40,7 +40,7 @@ def main():
                       help='provide ztp server ip')
   args = parser.parse_args()
 
-  print(f"{Fore.GREEN}" + fig.renderText("FABRIC ASSISTANT") + f"{Style.RESET_ALL}")
+  print(f"{Fore.GREEN}" + fig.renderText("FABRIC INITIALIZER") + f"{Style.RESET_ALL}")
 
   fabric_type = validate_input("Enter fabric type (vc or ip): ", input_type=list,
                                cli_input=args.fabric_type, choices=['vc', 'ip'])
