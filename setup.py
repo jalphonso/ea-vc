@@ -23,6 +23,7 @@ setup(
     long_description_content_type="text/markdown",
     author='Juniper Networks',
     packages=find_packages(),
+    python_requires='>=3.6',
     install_requires=requirements(),
     include_package_data=True,
     entry_points='''
