@@ -1,4 +1,4 @@
-from lib.exceptions import exceptions
+from juniper_datacenter_fabric.exceptions import exceptions
 
 
 def add_unique_interface(interface_list, new_interface):

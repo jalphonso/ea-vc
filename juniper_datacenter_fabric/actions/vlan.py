@@ -1,6 +1,6 @@
-from lib.exceptions import exceptions
-from lib.utils.unique import add_unique_vlan
-from lib.utils.validate import validate_input
+from juniper_datacenter_fabric.exceptions import exceptions
+from juniper_datacenter_fabric.utils.unique import add_unique_vlan
+from juniper_datacenter_fabric.utils.validate import validate_input
 
 
 def add_vlan(args, vc):

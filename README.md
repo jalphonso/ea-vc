@@ -5,12 +5,8 @@
 *See [requirements.txt](requirements.txt) for required Pip packages*
 
 ## Setup
-```
-mkdir output
-python3 -m venv .venv
-. .venv/bin/activate
-pip install -r requirements.txt
-```
+For local development or testing either use `make develop` or `make install`. See [Makefile](Makefile) for more options
+For production deployment, follow the installation instructions in [INSTALL.md](INSTALL.md)
 
 ## Initialize switch with command line options
 ```

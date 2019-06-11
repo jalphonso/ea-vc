@@ -8,9 +8,9 @@
   tasks:
 
   - set_fact:
-      junos_config_path: "configs/"
-      classes_template: "templates/isc-dhcp/classes.j2"
-      subnet_template: "templates/isc-dhcp/subnet.j2"
+      junos_config_path: "{{ inventory_dir }}/configs/"
+      classes_template: "../templates/isc-dhcp/classes.j2"
+      subnet_template: "../templates/isc-dhcp/subnet.j2"
       config_dir: "/etc/dhcp"
       remote_config_dir: "{{  '/var/www/html/config/'
                             if ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'

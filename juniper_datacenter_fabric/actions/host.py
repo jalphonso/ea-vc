@@ -1,7 +1,7 @@
 from colorama import Fore, Style
-from lib.exceptions import exceptions
-from lib.utils.unique import add_unique_interface, is_list_unique, host_is_unique_or_error
-from lib.utils.validate import validate_input
+from juniper_datacenter_fabric.exceptions import exceptions
+from juniper_datacenter_fabric.utils.unique import add_unique_interface, is_list_unique, host_is_unique_or_error
+from juniper_datacenter_fabric.utils.validate import validate_input
 
 
 import sys

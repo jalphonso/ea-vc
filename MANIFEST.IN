@@ -1,0 +1,2 @@
+recursive-include juniper_datacenter_fabric/playbooks *
+recursive-include juniper_datacenter_fabric/templates *

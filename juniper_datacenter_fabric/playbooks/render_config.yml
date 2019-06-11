@@ -6,8 +6,8 @@
   tasks:
   - set_fact:
       config_style: "VLAN_L2NG"
-      config_path: "configs/{{ inventory_hostname }}.conf"
-      template_path: templates/vc.j2
+      config_path: "{{ inventory_dir }}/configs/{{ inventory_hostname }}.conf"
+      template_path: ../templates/vc.j2
 
   - name: Build config from template
     template:

@@ -8,8 +8,8 @@
   tasks:
   - set_fact:
       config_style: "VLAN_L2NG"
-      config_path: "configs/{{ inventory_hostname }}.conf"
-      template_path: templates/vc.j2
+      config_path: "{{ inventory_dir }}/configs/{{ inventory_hostname }}.conf"
+      template_path: ../templates/vc.j2
 
   - name: Build config from template
     template:
@@ -21,7 +21,7 @@
       host: "{{ ansible_host }}"
       load: update
       src: "{{ config_path }}"
-      dest_dir: output
+      dest_dir: "{{ inventory_dir }}/config_change_logs"
       diff: true
       check: true
       commit: false
