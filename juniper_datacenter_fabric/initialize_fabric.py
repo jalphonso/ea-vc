@@ -1,6 +1,8 @@
 # PYTHON_ARGCOMPLETE_OK
 import argcomplete
 import argparse
+import juniper_datacenter_fabric.about as about
+import sys
 import ruamel.yaml
 
 from colorama import Fore, Style
@@ -37,15 +39,18 @@ parser.add_argument('--mgmt-ip', dest='mgmt_ip', metavar='<mgmt_ip>', nargs='+',
                     help='provide mgmt_ip in CIDR format x.x.x.x/x')
 parser.add_argument('--image', dest='image', metavar='<junos image>', nargs='+',
                     help='provide junos image filename for each device')
+parser.add_argument('--version', dest='version', action='store_true', default=False,
+                    help='print version and exit')
 parser.add_argument('--ztp-ip', dest='ztp_server_ip', metavar='<ztp server ip>',
                     help='provide ztp server ip')
 argcomplete.autocomplete(parser)
 args = parser.parse_args()
 
-
 def main():
   print(f"{Fore.GREEN}" + fig.renderText("FABRIC INITIALIZER") + f"{Style.RESET_ALL}")
-
+  if args.version:
+    print(f"{about.package_name} version is {about.package_version}")
+    sys.exit()
   fabric_type = validate_input("Enter fabric type (vc or ip): ", input_type=list,
                                cli_input=args.fabric_type, choices=['vc', 'ip'])
   if fabric_type == 'ip':
