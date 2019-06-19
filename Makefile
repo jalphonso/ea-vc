@@ -2,6 +2,7 @@ PROJECT=$(shell python3 setup.py --name)
 PROJECT_VERSION=$(shell python3 setup.py --version)
 SOURCEDIR=$(subst -,_,$(PROJECT))
 SOURCES=$(shell find $(SOURCEDIR) -name '*.py')
+APP_SERVER=ea-app
 
 .PHONY: venv build install develop clean test
 
@@ -22,8 +23,8 @@ install:
 
 deploy:
 	python3 setup.py sdist bdist_wheel
-	scp dist/$(PROJECT)-$(PROJECT_VERSION)-py3-none-any.whl fab-mgr:
-	ssh fab-mgr sudo /usr/local/bin/pip3 install -q -U $(PROJECT)-$(PROJECT_VERSION)-py3-none-any.whl
+	scp dist/$(PROJECT)-$(PROJECT_VERSION)-py3-none-any.whl $(APP_SERVER):
+	ssh $(APP_SERVER) /usr/local/bin/pip3 install -q -U $(PROJECT)-$(PROJECT_VERSION)-py3-none-any.whl
 
 develop: venv
 	. .venv/bin/activate && \
