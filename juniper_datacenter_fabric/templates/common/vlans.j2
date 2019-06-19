@@ -2,7 +2,6 @@ vlans {
     {% for vlan in vlans %}
     {{ vlan.name }} {
         vlan-id {{ vlan.id }};
-        l3-interface irb.{{ vlan.id }};
         vxlan {
             vni {{ 100000 + vlan.id }};
         }
