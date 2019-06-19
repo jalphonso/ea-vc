@@ -31,12 +31,10 @@ EVPN-ESI {
 }
 apply-groups [ MGMT EVPN-ESI ];
 {% with interfaces = host_interfaces %}
-{% for vlan in vlans %}
-    {# HACK. Temporary until higher level app is written to retreive and feed in the actual data #}
-    {% set ip_cidr = '192.168.' + (loop.index - 1)|string + '.' + vgw_local_index|string + '/24' %}
-    {% set vgw_ip = '192.168.' + (loop.index - 1)|string + '.1' %}
-    {% set interfaces = interfaces.append({ 'name': 'irb.' + vlan.id|string, 'ip_cidr': ip_cidr, 'vgw_ip': vgw_ip }) %}
-{% endfor %}
+{% if interfaces %}
 {% include "common/interfaces.j2" %}
+{% endif %}
 {% endwith %}
+{% if vlans %}
 {% include "common/vlans.j2" %}
+{% endif %}
