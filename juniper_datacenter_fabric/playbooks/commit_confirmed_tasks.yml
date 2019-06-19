@@ -14,7 +14,7 @@
     host: "{{ ansible_host }}"
     load: update
     src: "{{ config_path }}"
-    dest_dir: output
+    dest_dir: "{{ inventory_dir }}/config_change_logs"
     diff: true
     check: true
     commit: true
