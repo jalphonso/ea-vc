@@ -19,8 +19,8 @@
     check: true
     commit: true
     confirmed: 2
-    port: "830"
-    timeout: 60
+    port: "{{ netconf_port }}"
+    timeout: "{{ device_timeout }}"
   register: commit_confirm_result
 
 - name: Print error msg if reviewed config diff has changed
@@ -31,11 +31,11 @@
 
 - name: Wait 10 seconds for port 22 to become open and contain "OpenSSH"
   wait_for:
-    port: 22
+    port: "{{ netconf_port }}"
     host: "{{ ansible_host }}"
     search_regex: OpenSSH
     delay: 10
-    timeout: 30
+    timeout: "{{ device_timeout }}"
   connection: local
   when: pre_commit_result.diff_lines == commit_confirm_result.diff_lines
 
@@ -45,6 +45,6 @@
     diff: false
     check: true
     commit: false
-    port: 22
-    timeout: 60
+    port: "{{ netconf_port }}"
+    timeout: "{{ device_timeout }}"
   when: pre_commit_result.diff_lines == commit_confirm_result.diff_lines

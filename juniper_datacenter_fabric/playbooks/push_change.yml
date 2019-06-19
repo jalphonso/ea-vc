@@ -25,8 +25,8 @@
       diff: true
       check: true
       commit: false
-      port: "830"
-      timeout: 60
+      port: "{{ netconf_port }}"
+      timeout: "{{ device_timeout }}"
     register: pre_commit_result
 
   - name: proceed with config changes if needed
