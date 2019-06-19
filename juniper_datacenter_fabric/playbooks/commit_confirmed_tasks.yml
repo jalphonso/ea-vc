@@ -19,7 +19,7 @@
     check: true
     commit: true
     confirmed: 2
-    port: 830
+    port: "830"
     timeout: 60
   register: commit_confirm_result
 

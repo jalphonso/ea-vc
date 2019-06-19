@@ -25,7 +25,7 @@
       diff: true
       check: true
       commit: false
-      port: 830
+      port: "830"
       timeout: 60
     register: pre_commit_result
 
