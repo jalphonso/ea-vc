@@ -143,22 +143,25 @@ args = parser.parse_args()
 
 
 def main():
-  print(f"{Fore.GREEN}" + fig.renderText("FABRIC MANAGER") + f"{Style.RESET_ALL}")
-
-  fabric_name = validate_input("Enter fabric name: ", cli_input=args.fabric)
-  fabric_file = Path("./inventory/dc1/group_vars/" + fabric_name + ".yml")
-
   try:
-    vc = yaml.load(fabric_file)
-    args.func(args, vc)
-    yaml.dump(vc, fabric_file)
-    print(f"{Fore.YELLOW}Operation {args.func.__name__} Complete!{Style.RESET_ALL}")
-  except FileNotFoundError as e:
-    exit(e)
-  except exceptions.FabricError as e:
-    exit(e)
-  except AttributeError:
-    exit("Feature has probably not been implemented yet")
+    print(f"{Fore.GREEN}" + fig.renderText("FABRIC MANAGER") + f"{Style.RESET_ALL}")
+
+    fabric_name = validate_input("Enter fabric name: ", cli_input=args.fabric)
+    fabric_file = Path("./inventory/dc1/group_vars/" + fabric_name + ".yml")
+
+    try:
+      vc = yaml.load(fabric_file)
+      args.func(args, vc)
+      yaml.dump(vc, fabric_file)
+      print(f"{Fore.YELLOW}Operation {args.func.__name__} Complete!{Style.RESET_ALL}")
+    except FileNotFoundError as e:
+      exit(e)
+    except exceptions.FabricError as e:
+      exit(e)
+    except AttributeError:
+      exit("Feature has probably not been implemented yet")
+  except KeyboardInterrupt:
+    exit("\nUser requested early exit...")
 
 
 if __name__ == '__main__':
