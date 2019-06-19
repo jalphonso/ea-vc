@@ -33,7 +33,7 @@ develop: venv
 
 clean:
 	python3 setup.py clean && \
-	pip3 uninstall -q -y juniper-datacenter-fabric
+	pip3 uninstall -q -y $(PROJECT)
 	rm -rf *.egg-info/
 	rm -rf dist/ build/
 	find . -name '*.retry' -print | xargs rm
