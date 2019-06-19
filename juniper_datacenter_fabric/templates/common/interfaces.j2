@@ -63,10 +63,8 @@ interfaces {
               {% if interface.trunk %}
                 interface-mode trunk;
               {% endif %}
-              {% if interface.vlan is iterable and interface.vlan|length > 1 %}
+              {% if interface.vlan is iterable %}
                 {% set vlan_list = "[ " + interface.vlan | join(' ') + " ]" %}
-              {% else %}
-                {% set vlan_list = interface.vlan %}
               {% endif %}
               {% if config_style == 'BRIDGE_DOMAIN' %}
                 vlan-id-list {{ vlan_list }};
