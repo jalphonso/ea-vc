@@ -27,10 +27,11 @@ mkdir -p inventory/dc1/config_change_logs
 mkdir -p inventory/dc1/configs
 
 vim inventory/dc1/group_vars/all.yml
-*place the following fields in there updating values appropriate to your environment*
+**place the following fields in there updating values appropriate to your environment**
+```
 Lab_user_encrypted_pw: "$6$zIKJNefJ$amwbrri1wHu5ME3WtL0tv6bOKt3U5u/VLEV3nDdGErC893RdHfQVs6DLIZEiIh3cIy8xEN7X8yaqjuY06gfD60"
 root_user_encrypted_pw: "$6$JNow/UvT$Tu5aPwN5pVPrJ8lEDNuXb/PrhFC9AqI/EAQfYQdizjH3asyfItiuyw7W6hVm0fj8PQ5rjKmnnzNQ8/yypcCuk0"
 netconf_port: "830"
 device_timeout: 60
-
-*Note: netconf_port value needs to be quoted to avoid warning. device_timeout is an integer so no quotes*
+```
+**Note: netconf_port value needs to be quoted to avoid warning. device_timeout is an integer so no quotes**
