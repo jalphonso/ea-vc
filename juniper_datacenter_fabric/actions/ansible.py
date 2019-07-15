@@ -1,4 +1,4 @@
-from juniper_datacenter_fabric.utils.validate import validate_input
+from juniper_datacenter_fabric.utils.validate import validate_str, validate_password
 import subprocess
 import os
 
@@ -11,8 +11,8 @@ def build_configs(args, vc):
 
 def push_change(args, vc):
   fabric = vc['fabric_name']
-  user = validate_input("Enter network device username: ", cli_input=args.user)
-  passwd = validate_input("Enter network device password: ", input_type="password", cli_input=args.passwd)
+  user = validate_str("Enter network device username: ", cli_input=args.user)
+  passwd = validate_password("Enter network device password: ", cli_input=args.passwd)
 
   env = os.environ.copy()
   env['ANSIBLE_NET_USERNAME'] = user

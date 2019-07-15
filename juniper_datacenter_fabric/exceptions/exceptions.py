@@ -11,6 +11,11 @@ class FabricError(Exception):
     super().__init__(message)
 
 
+class InvalidInput(FabricError):
+  def __init__(self):
+    super().__init__("Invalid Input")
+
+
 class InterfaceAlreadyExists(FabricError):
   def __init__(self, message):
     super().__init__(message)

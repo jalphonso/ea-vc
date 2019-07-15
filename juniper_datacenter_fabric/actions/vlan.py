@@ -1,12 +1,12 @@
 from juniper_datacenter_fabric.exceptions import exceptions
 from juniper_datacenter_fabric.utils.unique import add_unique_vlan
-from juniper_datacenter_fabric.utils.validate import validate_input
+from juniper_datacenter_fabric.utils.validate import validate_str, validate_int
 
 
 def add_vlan(args, vc):
   def _add_vlan(vlan_id=None, vlan_name=None):
-    vlan = validate_input("Enter vlan id: ", int, 1, 4094, cli_input=vlan_id)
-    vlan_name = validate_input("Enter vlan name: ", cli_input=vlan_name, default="vlan."+str(vlan))
+    vlan = validate_int("Enter vlan id: ", 1, 4094, cli_input=vlan_id)
+    vlan_name = validate_str("Enter vlan name: ", cli_input=vlan_name, default="vlan."+str(vlan))
     vlan_yml = {
       'name': vlan_name,
       'id': vlan
@@ -29,7 +29,7 @@ def add_vlan(args, vc):
 
 def delete_vlan(args, vc):
   def _delete_vlan(vlan_name=None):
-    vlan = validate_input("Enter vlan name: ", cli_input=vlan_name)
+    vlan = validate_str("Enter vlan name: ", cli_input=vlan_name)
 
     # check to see if vlan is in use on any hosts
     if vlan in vlan_on_hosts:

@@ -11,12 +11,12 @@ from netaddr.core import AddrFormatError
 from pyfiglet import Figlet
 from ruamel.yaml.scalarstring import DoubleQuotedScalarString as dq
 from juniper_datacenter_fabric.host_vars.host import Host
-from juniper_datacenter_fabric.utils.validate import validate_input
+from juniper_datacenter_fabric.utils.validate import validate_choice, validate_str, validate_ip_address, validate_ip_network
 from juniper_datacenter_fabric.utils.update import update
 from juniper_datacenter_fabric.utils.exit import exit
 from juniper_datacenter_fabric.utils.unique import is_list_unique
 from pathlib import Path
-from juniper_datacenter_fabric.exceptions.exceptions import UnEqualCorrespondingArgs
+from juniper_datacenter_fabric.exceptions.exceptions import UnEqualCorrespondingArgs, FabricError
 
 yaml = ruamel.yaml.YAML()
 yaml.indent(sequence=4, offset=2)
@@ -53,12 +53,12 @@ def main():
     if args.version:
       print(f"{about.package_name} version is {about.package_version}")
       sys.exit()
-    fabric_type = validate_input("Enter fabric type (vc or ip): ", input_type=list,
-                                 cli_input=args.fabric_type, choices=['vc', 'ip'])
+    fabric_type = validate_choice("Enter fabric type (vc or ip): ",
+                                  cli_input=args.fabric_type, choices=['vc', 'ip'])
     if fabric_type == 'ip':
       exit('Fabric type IP has not been implemented yet')
 
-    fabric_name = validate_input("Enter fabric name: ", cli_input=args.fabric_name)
+    fabric_name = validate_str("Enter fabric name: ", cli_input=args.fabric_name)
     fabric_file = Path("./inventory/dc1/group_vars/" + fabric_name + ".yml")
     ansible_hosts_file = Path("./inventory/dc1/hosts.yml")
 
@@ -93,7 +93,7 @@ def main():
                     if 'serial_number' in host_val:
                       all_sns.append(str(host_val['serial_number']))
 
-    hosts = validate_input("Enter hostnames of fabric devices: ", cli_input=args.hosts)
+    hosts = validate_str("Enter hostnames of fabric devices: ", cli_input=args.hosts)
     if not args.hosts:
       hosts = hosts.split()
     if not is_list_unique(hosts):
@@ -130,8 +130,8 @@ def main():
     if fabric_type == 'vc' and len(hosts) > 2:
       exit('Fabric type VC only supports 2 members')
 
-    ztp_server_ip = str(validate_input(f"Enter ZTP Server IP Address x.x.x.x: ", "IPAddress",
-                                       cli_input=args.ztp_server_ip))
+    ztp_server_ip = str(validate_ip_address(f"Enter ZTP Server IP Address x.x.x.x: ",
+                                            cli_input=args.ztp_server_ip))
     ztp_group = "ztp_group_" + ztp_server_ip.replace(".", "_")
 
     fabric_data = {'fabric_name': fabric_name, 'ztp_server_ip': ztp_server_ip, 'ztp_group': ztp_group,
@@ -144,27 +144,27 @@ def main():
       vgw_local_index = node_id + 2
 
       while True:
-        serial = validate_input(f"Enter serial number for host {host}: ",
-                                cli_input=args.serial[idx] if args.serial else None)
+        serial = validate_str(f"Enter serial number for host {host}: ",
+                              cli_input=args.serial[idx] if args.serial else None)
         if serial not in all_sns:
           all_sns.append(serial)
           break
         print(f"{Fore.YELLOW}Serial number is already in use, please check and "
               f"enter the correct unique serial{Style.RESET_ALL}")
 
-      role = validate_input(f"Enter role for host {host} (spine or leaf): ", input_type=list, choices=['spine', 'leaf'],
-                            cli_input=args.role[idx] if args.role else None)
+      role = validate_choice(f"Enter role for host {host} (spine or leaf): ", choices=['spine', 'leaf'],
+                             cli_input=args.role[idx] if args.role else None)
 
       while True:
-        mgmt_ip = validate_input(f"Enter management IP for host '{host}' in CIDR format x.x.x.x/x: ", "IPNetwork",
-                                 cli_input=args.mgmt_ip[idx] if args.mgmt_ip else None)
+        mgmt_ip = validate_ip_network(f"Enter management IP for host '{host}' in CIDR format x.x.x.x/x: ",
+                                      cli_input=args.mgmt_ip[idx] if args.mgmt_ip else None)
         if mgmt_ip.ip not in all_mgmt_ips:
           all_mgmt_ips.append(mgmt_ip.ip)
           break
         print(f"{Fore.YELLOW}Mgmt IP is already in use, please check and enter the correct unique IP{Style.RESET_ALL}")
 
-      image = validate_input(f"Enter image for host {host}: ",
-                             cli_input=args.image[idx] if args.image else None)
+      image = validate_str(f"Enter image for host {host}: ",
+                           cli_input=args.image[idx] if args.image else None)
       mgmt_default_gw = mgmt_ip[1]
 
       ztp_subnet = 'subnet_' + str(mgmt_ip.ip).split('.')[2]
@@ -284,6 +284,8 @@ def main():
       exit(e)
 
     print(f"{Fore.YELLOW}Fabric {fabric_name} Initialization Complete!{Style.RESET_ALL}")
+  except FabricError as e:
+    exit(e.__class__.__name__)
   except KeyboardInterrupt:
     exit("\nUser requested early exit...")
 

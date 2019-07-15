@@ -9,7 +9,7 @@ from juniper_datacenter_fabric.actions import host as host_actions
 from juniper_datacenter_fabric.actions import vlan as vlan_actions
 from juniper_datacenter_fabric.exceptions import exceptions
 from juniper_datacenter_fabric.utils.exit import exit
-from juniper_datacenter_fabric.utils.validate import validate_input
+from juniper_datacenter_fabric.utils.validate import validate_str
 from pathlib import Path
 from pyfiglet import Figlet
 
@@ -146,7 +146,7 @@ def main():
   try:
     print(f"{Fore.GREEN}" + fig.renderText("FABRIC MANAGER") + f"{Style.RESET_ALL}")
 
-    fabric_name = validate_input("Enter fabric name: ", cli_input=args.fabric)
+    fabric_name = validate_str("Enter fabric name: ", cli_input=args.fabric)
     fabric_file = Path("./inventory/dc1/group_vars/" + fabric_name + ".yml")
 
     try:
@@ -156,12 +156,12 @@ def main():
       print(f"{Fore.YELLOW}Operation {args.func.__name__} Complete!{Style.RESET_ALL}")
     except FileNotFoundError as e:
       exit(e)
-    except exceptions.FabricError as e:
-      exit(e)
     except AttributeError:
       exit("Feature has probably not been implemented yet")
   except KeyboardInterrupt:
     exit("\nUser requested early exit...")
+  except exceptions.FabricError as e:
+    exit(e.__class__.__name__)
 
 
 if __name__ == '__main__':

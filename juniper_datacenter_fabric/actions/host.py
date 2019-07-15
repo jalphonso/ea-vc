@@ -1,37 +1,36 @@
+import sys
 from colorama import Fore, Style
 from juniper_datacenter_fabric.exceptions import exceptions
 from juniper_datacenter_fabric.utils.unique import add_unique_interface, is_list_unique, host_is_unique_or_error
-from juniper_datacenter_fabric.utils.validate import validate_input
-
-
-import sys
+from juniper_datacenter_fabric.utils.validate import (validate_choice, validate_str, validate_bool, validate_interface,
+                                                      validate_int, validate_ip_address, validate_ip_network)
 
 
 def add_host(args, vc):
   # Initial questions
   vlans = []
-  hostname = validate_input(f"{Fore.YELLOW}\nHostname (tag) of end device (this is used to group interfaces)\n"
-                            f"If this host has more than one interface group then name it accordingly\n"
-                            f"  i.e. hostname-mgmt or hostname-data\n\n{Style.RESET_ALL}"
-                            f"Enter hostname/interface group tag: ", cli_input=args.hostname)
+  hostname = validate_str(f"{Fore.YELLOW}\nHostname (tag) of end device (this is used to group interfaces)\n"
+                          f"If this host has more than one interface group then name it accordingly\n"
+                          f"  i.e. hostname-mgmt or hostname-data\n\n{Style.RESET_ALL}"
+                          f"Enter hostname/interface group tag: ", cli_input=args.hostname)
   host_is_unique_or_error(vc['host_interfaces'], hostname, vc['fabric_name'])
-  trunk = validate_input("Is this host trunking Vlans? (y or n): ", bool, default=True, cli_input=args.trunk)
-  jumbo = validate_input("Enable Jumbo Frames? (y or n): ", bool, default=True, cli_input=args.jumbo)
-  lag = validate_input("Is this host using multiple interfaces in a lag? (y or n): ",
-                       bool, default=True, cli_input=args.lag)
+  trunk = validate_bool("Is this host trunking Vlans? (y or n): ", default=True, cli_input=args.trunk)
+  jumbo = validate_bool("Enable Jumbo Frames? (y or n): ", default=True, cli_input=args.jumbo)
+  lag = validate_bool("Is this host using multiple interfaces in a lag? (y or n): ",
+                      default=True, cli_input=args.lag)
   if lag:
-    ae = validate_input("Enter ae id for lag (bond): ", int, 0, 48, cli_input=args.ae)
-    ae_description = validate_input("Enter ae interface description: ", cli_input=args.ae_description)
-    lacp = validate_input("Is ae using lacp?: ", bool, default=True, cli_input=args.lacp)
+    ae = validate_int("Enter ae id for lag (bond): ", 0, 48, cli_input=args.ae)
+    ae_description = validate_str("Enter ae interface description: ", cli_input=args.ae_description)
+    lacp = validate_bool("Is ae using lacp?: ", default=True, cli_input=args.lacp)
     if lacp:
-      lacp_active = validate_input("Use lacp active (y for active, n for passive)?: ",
-                                   bool, default=True, cli_input=args.lacp_active)
+      lacp_active = validate_bool("Use lacp active (y for active, n for passive)?: ",
+                                  default=True, cli_input=args.lacp_active)
 
   # Construct VLAN list
   existing_vlans = [v['name'] for v in vc['vlans']]
 
   def add_vlan_to_list(vlan_name=None):
-    new_vlan = validate_input("Enter vlan name for host interface: ", cli_input=vlan_name)
+    new_vlan = validate_str("Enter vlan name for host interface: ", cli_input=vlan_name)
     if new_vlan in existing_vlans:
       vlans.append(new_vlan)
     else:
@@ -43,14 +42,14 @@ def add_host(args, vc):
   else:
     while True:
       add_vlan_to_list()
-      if not trunk or not validate_input("Do you want to enter another vlan to this trunk? (y or n): ",
-                                         bool, default=False):
+      if not trunk or not validate_bool("Do you want to enter another vlan to this trunk? (y or n): ",
+                                        default=False):
         break
 
   # Private Interface Function
   def build_interface(interface_name=None, description=None):
-    interface = validate_input("Enter interface name: ", input_type='Interface', cli_input=interface_name)
-    description = validate_input("Enter interface description: ", cli_input=description)
+    interface = validate_interface("Enter interface name: ", cli_input=interface_name)
+    description = validate_str("Enter interface description: ", cli_input=description)
     host_interface_yml = {
       'name': interface,
       'description': description if description.strip() else None,
@@ -75,8 +74,8 @@ def add_host(args, vc):
   else:
     while True:
       build_interface()
-      if validate_input("Does this host have more interfaces that need to be "
-                        "configured at the same time? (y or n): ", bool, default=False):
+      if validate_bool("Does this host have more interfaces that need to be "
+                       "configured at the same time? (y or n): ", default=False):
         continue
       break
 
@@ -101,7 +100,7 @@ def add_host(args, vc):
 
 
 def delete_host(args, vc):
-  hostname = validate_input("Enter hostname of end device: ", cli_input=args.hostname)
+  hostname = validate_str("Enter hostname of end device: ", cli_input=args.hostname)
   hosts = [h['tag'] for h in vc['host_interfaces']]
   if hostname not in hosts:
     raise exceptions.HostDoesNotExist(f"Host {hostname} does not exist in fabric {vc['fabric_name']}")
