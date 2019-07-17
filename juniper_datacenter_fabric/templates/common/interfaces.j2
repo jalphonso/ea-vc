@@ -12,15 +12,16 @@ interfaces {
       {% if interface.mtu is defined and interface.mtu %}
         mtu {{ interface.mtu }};
       {% endif %}
-      {% if interface.name.startswith('ae') and interface.lacp is defined %}
-      {% if interface.esi is defined and interface.esi %}
+      {% if interface.name.startswith('ae') %}
         {% set x, ae = interface.name.split('ae') %}
         {% set ae = '%02d' % ae|int %}
+      {% if interface.esi is defined and interface.esi %}
         esi {
             00:00:00:00:00:00:51:00:00:{{ ae }};
             all-active;
         }
       {% endif %}
+      {% if interface.lacp is defined %}
         aggregated-ether-options {
             lacp {
             {% if interface.lacp.active is defined and interface.lacp.active %}
@@ -33,6 +34,7 @@ interfaces {
             {% endif %}
             }
         }
+      {% endif %}
       {% endif %}
       {% if interface.ae is defined and interface.ae|string %}
         ether-options {
