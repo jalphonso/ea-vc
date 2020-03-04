@@ -1,9 +1,11 @@
 ---
 fabric_name: vc1
-ztp_server_ip: 192.168.105.6
-ztp_group: ztp_group_192_168_105_6
+ztp_server_ip: 10.2.205.6
+ztp_group: ztp_group_10_2_205_6
+ztp_mgmt_ip: 192.168.254.220
+ztp_user: root
 subnets:
-  - subnet_105
+  - subnet_205
 host_interfaces:
   - name: ae0
     description: Trunk to ESX127

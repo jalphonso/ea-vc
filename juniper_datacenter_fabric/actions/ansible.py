@@ -30,10 +30,14 @@ def provision_ztp(args, vc):
   #for this scenario. Probably due to the ad hoc inventory param
   cwd = os.getcwd()
   ztp_server = vc['ztp_server_ip']
+  ztp_mgmt_ip = vc['ztp_mgmt_ip']
   ztp_subnets = vc['subnets']
   ztp_group = vc['ztp_group']
-  subprocess.call(['ansible-playbook', '-i', 'inventory/dc1/hosts.yml', '-i', f"{ztp_server},",
+  ztp_user = vc['ztp_user']
+  subprocess.call(['ansible-playbook', '-i', 'inventory/dc1/hosts.yml', '-i', f"{ztp_mgmt_ip},",
                    '-e', f"ztp_server={ztp_server}", '-e', f"ztp_group={ztp_group}",
                    '-e', "{ztp_subnets: %s}" % format(ztp_subnets),
                    '-e', f"inventory_dir={cwd}/inventory/dc1",
+                   '-e', f"ztp_mgmt_ip={ztp_mgmt_ip}",
+                   '-e', f"ztp_user={ztp_user}",
                    os.path.dirname(os.path.abspath(__file__)) + '/../playbooks/ztp.yml'])

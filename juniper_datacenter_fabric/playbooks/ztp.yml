@@ -1,10 +1,10 @@
 ---
 
-- hosts: "{{ ztp_server }}"
+- hosts: "{{ ztp_mgmt_ip }}"
   gather_facts: yes
   become: true
   become_method: sudo
-  remote_user: centos
+  remote_user: "{{ ztp_user }}"
   tasks:
 
   - set_fact:
