@@ -1,0 +1,53 @@
+protocols {
+    bgp {
+        group DISTRO_UNDERLAY {
+            type external;
+            mtu-discovery;
+            import UNDERLAY_IMPORT;
+            family inet {
+                unicast;
+            }
+            export UNDERLAY_EXPORT;
+            local-as "{{ underlay_as_prefix }}{{ inventory_hostname[1:5] }}";
+            multipath {
+                multiple-as;
+            }
+            bfd-liveness-detection {
+                minimum-interval 500;
+                multiplier 3;
+                session-mode single-hop;
+            }
+            {% for neighbor in dc_interfaces %}
+                {% if neighbor.underlay.neighbor_ip is defined %}
+            neighbor {{ neighbor.underlay.neighbor_ip}} {
+                    {% if neighbor.remote_as is defined %}
+                peer-as {{ neighbor.remote_as }};
+                    {%else %}
+                peer-as {{ underlay_as_prefix }}{{ neighbor.description[1:5] }};
+                    {% endif %}
+            }
+                {% endif %}
+            {% endfor %}
+        }
+        group DISTRO_CLIENT {
+            type internal;
+            local-address {{ lo0_ip_cidr.split('/')[0] }};
+            mtu-discovery;
+            family inet {
+                unicast;
+            }
+            export DC_EXPORT;
+            multipath;
+            bfd-liveness-detection {
+                minimum-interval 1000;
+                multiplier 3;
+                session-mode automatic;
+            }
+            {% for neighbor in dc_interfaces %}
+                {% if neighbor.overlay.neighbor_ip is defined %}
+            neighbor {{ neighbor.overlay.neighbor_ip }};
+                {% endif %}
+            {% endfor %}
+        }
+    }
+}

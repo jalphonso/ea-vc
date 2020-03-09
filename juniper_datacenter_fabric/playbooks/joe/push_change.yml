@@ -1,0 +1,34 @@
+---
+
+- hosts: "{{ fabric }}"
+  connection: local
+  gather_facts: no
+  roles:
+    - Juniper.junos
+  tasks:
+  - set_fact:
+      config_style: "VLAN_L2NG"
+      config_path: "{{ inventory_dir }}/configs/{{ inventory_hostname }}.conf"
+      template_path: ../templates/vc.j2
+
+  - name: Build config from template
+    template:
+      src: "{{ template_path }}"
+      dest: "{{ config_path }}"
+
+  - name: Deploy config to Junos devices
+    juniper_junos_config:
+      host: "{{ ansible_host }}"
+      load: update
+      src: "{{ config_path }}"
+      dest_dir: "{{ inventory_dir }}/config_change_logs"
+      diff: true
+      check: true
+      commit: false
+      port: "{{ netconf_port }}"
+      timeout: "{{ device_timeout }}"
+    register: pre_commit_result
+
+  - name: proceed with config changes if needed
+    import_tasks: commit_confirmed_tasks.yml
+    when: pre_commit_result is changed

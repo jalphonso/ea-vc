@@ -1,0 +1,20 @@
+fabric_name: lg2
+
+host_interfaces:
+
+vlans:
+  - name: MANAGEMENT
+    id: 2001
+    description: "Management VLAN for NSX-T"
+  - name: VMOTION
+    id: 2002
+    description: "vMotion VLAN for NSX-T"
+  - name: STORAGE
+    id: 2003
+    description: "Storage VLAN for NSX-T"
+  - name: NSX-TRANSPORT
+    id: 2004
+    description: "NSX-TRANSPORT VLAN for NSX-T in Leaf Group 3"
+  - name: NSX-TRANSPORT-EDGE
+    id: 2005
+    description: "ue900-t0edge-nsx-transport"

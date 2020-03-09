@@ -1,0 +1,38 @@
+
+lo0_ip_cidr: 10.255.255.100/32
+
+wan_interfaces:
+  - description: to WAN
+    name: et-0/0/2
+    ip_cidr: 10.55.55.2/30
+    wan:
+      neighbor_ip: 10.55.55.1
+      remote_as: 65200
+
+dc_interfaces:
+  - description: U4002-TCH
+    name: et-0/0/0
+    ip_cidr: 10.1.1.0/31
+    underlay:
+      neighbor_ip: 10.1.1.1
+    overlay:
+      neighbor_ip: 10.255.255.102
+  - description: U4003-TCH
+    name: et-0/0/1
+    ip_cidr: 10.1.1.2/31
+    underlay:
+      neighbor_ip: 10.1.1.3
+    overlay:
+      neighbor_ip: 10.255.255.103
+
+
+
+mgmt_interface:
+  - description: Management
+    name: fxp0
+    ip_cidr: "{{ mgmt_ip_cidr }}"
+
+loopback_interfaces:
+  - description: Loopback
+    name: lo0
+    ip_cidr: "{{ lo0_ip_cidr }}"

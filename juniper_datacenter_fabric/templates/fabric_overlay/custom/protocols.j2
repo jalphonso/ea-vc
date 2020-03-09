@@ -1,0 +1,29 @@
+{% extends "fabric_overlay/protocols.j2" %}}
+{% block cluster%}
+cluster 0.0.0.1;
+{% endblock%}}
+
+{% block protocols_bgp %}
+{{ super() }}
+        group OVERLAY-RR {
+            type internal;
+            local-address {{ lo0_ip_cidr.split('/')[0] }};
+            family evpn {
+                signaling;
+            }
+            vpn-apply-export;
+            bfd-liveness-detection {
+                minimum-interval 1000;
+                multiplier 3;
+                session-mode automatic;
+            }
+            multipath;
+            {% for host in groups['spine'] %}
+                {% set spine_ip = hostvars[host]['lo0_ip_cidr'].split('/')[0] %}
+                {% if spine_ip != lo0_ip_cidr.split('/')[0] %}
+            neighbor {{ spine_ip }};
+                {% endif %}
+            {% endfor %}      
+        }
+{% endblock %}
+

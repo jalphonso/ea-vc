@@ -1,0 +1,21 @@
+{% call junos.stanza() %}
+ospf {
+    traffic-engineering;
+    area 0.0.0.0 {
+    {% for interface in interfaces %}
+      {% if interface.ospf is defined %}
+      {% if interface.ospf.enabled is defined and interface.ospf.enabled %}
+      {% if interface.ospf.passive is defined and interface.ospf.passive %}
+        interface {{ interface.name }}.0 {
+            passive;
+        }
+      {% else %}
+        interface {{ interface.name }}.0;
+      {% endif %}
+      {% endif %}
+      {% endif %}
+    {% endfor %}
+    }
+}
+{% endcall %}
+

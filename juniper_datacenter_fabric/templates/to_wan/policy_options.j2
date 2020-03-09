@@ -1,0 +1,34 @@
+policy-options {
+    policy-statement DEFAULT_ROUTE_ONLY {
+        term 0/0 {
+            from {
+                protocol bgp;
+                route-filter 0.0.0.0/0 exact;
+            }
+            then accept;
+        }
+        term DEFAULT {
+            then reject;
+        }
+    }
+    policy-statement WAN_EXPORT {
+        term NO_UNDERLAY {
+            from {
+                protocol bgp;
+                community UNDERLAY;
+            }
+            then reject;
+        }
+        term LOCAL_BGP {
+            from {
+                protocol bgp;
+                as-path NULL;
+            }
+            then accept;
+        }
+        term DEFAULT {
+            then reject;
+        }
+    }
+    as-path NULL "()";
+}

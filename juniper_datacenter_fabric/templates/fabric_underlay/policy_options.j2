@@ -1,0 +1,46 @@
+policy-options {
+    prefix-list LOOPBACK_PRIMARY {
+        apply-path "interfaces lo0 unit <*> family inet address <*>";
+    }
+    policy-statement UNDERLAY_EXPORT {
+        term LOOPBACK {
+            from {
+                protocol direct;
+                prefix-list LOOPBACK_PRIMARY;
+            }
+            then {
+                community add UNDERLAY;
+                accept;
+            }
+        }
+        term BGP {
+            from {
+                protocol bgp;
+                community UNDERLAY;
+            }
+            then accept;
+        }
+        term DEFAULT {
+            then reject;
+        }
+    }
+    policy-statement UNDERLAY_IMPORT {
+        term REJECT_GT_3_AS {
+            from {
+                protocol bgp;
+                as-path LIMIT_3_AS;
+            }
+            then reject;
+        }
+        term ACCEPT_UNDERLAY {
+            from community UNDERLAY;
+            then accept;
+        }
+        term DEFAULT {
+            then reject;
+        }
+    }
+    community UNDERLAY members {{ underlay_community }};
+    as-path LIMIT_3_AS ".{3, }";
+}
+

@@ -1,0 +1,21 @@
+policy-options {
+    prefix-list IRB_OUT {
+        apply-path "interfaces irb unit <*> family inet address <*>";
+    }
+    policy-statement OVERLAY_CLIENT_IMPORT {
+        term IMPORT_EVPN {
+            from {
+                family evpn;
+                community OVERLAY-{{ local_asn }};
+            }
+            then {
+                accept;
+            }
+        }
+        term DEFAULT {
+            then reject;
+        }
+    }
+    community OVERLAY-{{ local_asn }} members {{ overlay_community }};
+}
+

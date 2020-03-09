@@ -1,0 +1,14 @@
+{% call junos.stanza() %}
+lldp {
+    port-id-subtype interface-name;
+    neighbour-port-info-display port-id;
+    interface all;
+    interface em0 {
+        disable;
+    }
+    interface em1 {
+        disable;
+    }
+}
+{% endcall %}
+

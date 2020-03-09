@@ -1,0 +1,22 @@
+{% call junos.stanza() %}
+bgp {
+    local-as {{ asn }};
+  {% for interface in interfaces %}
+  {% if interface.mpls is defined and interface.mpls %}
+    group {{ interface.bgp_group }} {
+        type external;
+        local-address {{ interface.ip_cidr|ipv4('address') }};
+        family inet {
+            unicast;
+        }
+        family inet-vpn {
+            unicast;
+        }
+        peer-as {{ interface.peer_asn }};
+        neighbor {{ interface.neighbor|ipv4('address') }};
+    }
+  {% endif %}
+  {% endfor %}
+}
+{% endcall %}
+

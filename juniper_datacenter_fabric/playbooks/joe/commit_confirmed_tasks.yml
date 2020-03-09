@@ -1,0 +1,50 @@
+---
+
+- name: cat diffs_file
+  debug:
+    var: pre_commit_result.diff_lines
+
+- name: Pausing for user to review configuration changes for all hosts
+  pause:
+    prompt: "Please review configuration changes"
+    seconds: 20
+
+- name: Deploy config to Junos devices
+  juniper_junos_config:
+    host: "{{ ansible_host }}"
+    load: update
+    src: "{{ config_path }}"
+    dest_dir: "{{ inventory_dir }}/config_change_logs"
+    diff: true
+    check: true
+    commit: true
+    confirmed: 2
+    port: "{{ netconf_port }}"
+    timeout: "{{ device_timeout }}"
+  register: commit_confirm_result
+
+- name: Print error msg if reviewed config diff has changed
+  debug:
+    msg: "Not confirming commit since previsouly reviewed diff \
+          has changed. Someone else may have altered the config. Please try again."
+  when: pre_commit_result.diff_lines != commit_confirm_result.diff_lines
+
+- name: Wait 10 seconds for port "{{ netconf_port }}" to become open and contain "OpenSSH"
+  wait_for:
+    port: "{{ netconf_port }}"
+    host: "{{ ansible_host }}"
+    search_regex: OpenSSH
+    delay: 10
+    timeout: "{{ device_timeout }}"
+  connection: local
+  when: pre_commit_result.diff_lines == commit_confirm_result.diff_lines
+
+- name: Issuing commit check to confirm commit which finalizes changes
+  juniper_junos_config:
+    host: "{{ ansible_host }}"
+    diff: false
+    check: true
+    commit: false
+    port: "{{ netconf_port }}"
+    timeout: "{{ device_timeout }}"
+  when: pre_commit_result.diff_lines == commit_confirm_result.diff_lines

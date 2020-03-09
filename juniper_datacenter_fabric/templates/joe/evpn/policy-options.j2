@@ -1,0 +1,71 @@
+policy-options {
+    prefix-list LOOPBACK {
+        apply-path "interfaces lo0 unit 0 family inet address <*>";
+    }
+    policy-statement EXPORT_UNDERLAY {
+        term LOOPBACK {
+            from {
+                protocol direct;
+                prefix-list LOOPBACK;
+            }
+            then {
+                community add UNDERLAY;
+                accept;
+            }
+        }
+        term ICL {
+            from {
+                protocol direct;
+                {% for interface in interfaces if interface.is_icl is defined and interface.is_icl %}
+                route-filter {{ interface.ip_cidr | ipv4('network/prefix') }} orlonger;
+                {% endfor %}
+            }
+            then {
+                community add UNDERLAY;
+                accept;
+            }
+        }
+        term DEFAULT {
+            then reject;
+        }
+    }
+    policy-statement IMPORT_UNDERLAY {
+        term IMPORT {
+            from {
+                protocol bgp;
+                community UNDERLAY;
+            }
+            then accept;
+        }
+        term DEFAULT {
+            then reject;
+        }
+    }
+    policy-statement EXPORT_OVERLAY {
+        term DEFAULT {
+            then {
+                community add OVERLAY;
+                accept;
+            }
+        }
+    }
+    policy-statement IMPORT_OVERLAY {
+        term IMPORT {
+            from {
+                protocol bgp;
+                community OVERLAY;
+            }
+            then accept;
+        }
+    }
+    policy-statement PFE-LB {
+        term DEFAULT {
+            then {
+                load-balance per-packet;
+            }
+        }
+    }
+    community UNDERLAY members 65535:9999;
+    community OVERLAY members 65535:9998;
+}
+

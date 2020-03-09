@@ -1,0 +1,40 @@
+#jinja2: lstrip_blocks: True, trim_blocks: True
+{% import "macros/junos.j2" as junos %}
+groups {
+{% call junos.stanza() %}
+TO_WAN {
+    {% include 'to_wan/policy_options.j2' %} 
+    {% include 'fabric_underlay/policy_options.j2' %}
+    {% include 'to_wan/protocols.j2' %}
+    {% with interfaces = wan_interfaces %}
+        {% include 'common/interfaces.j2' %}
+    {% endwith %}
+}
+TO_DATA_CENTER {
+    {% call junos.stanza() %}
+    {% include 'to_data_center/protocols.j2' %}
+    {% include 'to_data_center/policy_options.j2' %}
+    {% with interfaces = dc_interfaces %}
+        {% include 'common/interfaces.j2' %}
+    {% endwith %}
+    {% endcall %}
+}
+MGMT {
+    {% call junos.stanza() %}
+    {% include 'mgmt/system.j2' %}
+    {% include 'mgmt/routing_options.j2' %}
+    {% include 'mgmt/chassis.j2' %}
+    {% include 'mgmt/policy_options.j2' %}
+    {% include 'mgmt/routing_instances.j2' %}
+    {% include 'mgmt/protocols.j2' %}
+    {% with interfaces = mgmt_interface %}
+        {% include 'common/interfaces.j2' %}
+    {% endwith %}
+    {% with interfaces = loopback_interfaces %}
+        {% include 'common/interfaces.j2' %}
+    {% endwith %}
+    {% endcall %}
+}
+{% endcall %}
+}
+apply-groups [ TO_WAN TO_DATA_CENTER MGMT ];

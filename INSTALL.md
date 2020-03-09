@@ -15,6 +15,7 @@ ln -s $(which python3) /usr/bin/python3
 $(which pip3) install -U pip
 $(which pip3) install selinux
 $(which pip3) install juniper_datacenter_fabric-1.0.0-py3-none-any.whl
+yum install ansible
 ansible-galaxy install Juniper.junos
 
 AS REGULAR USER:

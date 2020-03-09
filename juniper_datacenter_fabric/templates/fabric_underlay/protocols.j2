@@ -1,0 +1,34 @@
+protocols {
+    bgp {
+        group UNDERLAY {
+            type external;
+            mtu-discovery;
+            import UNDERLAY_IMPORT;
+            family inet {
+                unicast;
+            }
+            export UNDERLAY_EXPORT;
+            local-as  "{{ underlay_as_prefix }}{{ inventory_hostname[1:5] }}";
+            multipath {
+                multiple-as;
+            }
+            bfd-liveness-detection {
+                minimum-interval 500;
+                multiplier 3;
+                session-mode single-hop;
+            }
+            {% for neighbor in fabric_interfaces %}
+                {% if neighbor.underlay.neighbor_ip is defined %}
+            neighbor {{ neighbor.underlay.neighbor_ip}} {
+                    {% if neighbor.underlay.remote_as is defined %}
+                peer-as {{ neighbor.underlay.remote_as }};
+                    {%else %}
+                peer-as {{ underlay_as_prefix }}{{ neighbor.description[1:5] }};
+                    {% endif %}
+            }
+                {% endif %}
+            {% endfor %}
+        }
+    }
+}
+

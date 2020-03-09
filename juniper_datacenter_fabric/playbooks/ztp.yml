@@ -1,7 +1,7 @@
 ---
 
 - hosts: "{{ ztp_mgmt_ip }}"
-  gather_facts: yes
+  gather_facts: true
   become: true
   become_method: sudo
   remote_user: "{{ ztp_user }}"
@@ -33,6 +33,9 @@
       group: "{{ nginx_group }}"
       mode: 0644
 
+  - name: SELinux restorecon for ztp configs directory
+    shell: /sbin/restorecon -iRv "{{ remote_config_dir }}"
+
   - name: Build dhcp classes config from template
     template:
       src: "{{ classes_template }}"
@@ -41,6 +44,9 @@
       owner: dhcpd
       group: dhcpd
     notify: "restart dhcp"
+
+  - name: SELinux restorecon for dhcp classes.conf
+    shell: /sbin/restorecon "{{ config_dir }}/classes.conf"
 
   - name: Build dhcp pools config from template
     template:
@@ -52,6 +58,11 @@
     with_items:
       - "{{ ztp_subnets }}"
     notify: "restart dhcp"
+
+  - name: SELinux restorecon for dhcp pool configs
+    shell: /sbin/restorecon "{{ config_dir }}/{{ item }}.conf"
+    with_items:
+      - "{{ ztp_subnets }}"
 
   handlers:
   - name: Restart ISC DHCP service on CentOS/RHEL

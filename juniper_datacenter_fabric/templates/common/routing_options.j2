@@ -1,0 +1,7 @@
+routing-options {
+    forwarding-table {
+        export PFE-LB;
+    }
+    autonomous-system {{ overlay_as }};
+    router-id {{ lo0_ip_cidr.split('/')[0] }};
+}

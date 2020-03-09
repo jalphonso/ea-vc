@@ -1,0 +1,18 @@
+routing-options {
+    static {
+        route 0.0.0.0/0 next-hop {{ mgmt_default_gw }};
+    }
+    forwarding-table {
+        export PFE-LB;
+        {% if 'spine' in group_names %}
+        chained-composite-next-hop {
+            ingress {
+                evpn;
+            }
+        }
+        {% endif %}
+    }
+    autonomous-system {{ local_asn }};
+    router-id {{ lo0_ip_cidr.split('/')[0] }};
+}
+

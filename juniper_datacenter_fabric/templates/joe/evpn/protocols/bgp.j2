@@ -1,0 +1,45 @@
+{% call junos.stanza() %}
+bgp {
+    group UNDERLAY {
+        type external;
+        import IMPORT_UNDERLAY;
+        family inet {
+            unicast;
+        }
+        export EXPORT_UNDERLAY;
+        local-as {{ bgp.underlay.asn }};
+        multipath {
+            multiple-as;
+        }
+        bfd-liveness-detection {
+            minimum-interval 350;
+            multiplier 3;
+        }
+        {% for neighbor in bgp.underlay.neighbors %}
+        neighbor {{ neighbor.ip }} {
+            peer-as {{ neighbor.asn }};
+        }
+        {% endfor %}
+    }
+    group OVERLAY {
+        type internal;
+        local-address {{ bgp.overlay.local_ip }};
+        import IMPORT_OVERLAY;
+        family evpn {
+            signaling;
+        }
+        export EXPORT_OVERLAY;
+        local-as {{ bgp.overlay.asn }};
+        multipath;
+        bfd-liveness-detection {
+            minimum-interval 350;
+            multiplier 3;
+            session-mode automatic;
+        }
+        {% for neighbor in bgp.overlay.neighbors %}
+        neighbor {{ neighbor.ip }};
+        {% endfor %}
+    }
+}
+{% endcall %}
+

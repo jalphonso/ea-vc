@@ -4,12 +4,14 @@ from juniper_datacenter_fabric.utils.validate import validate_str, validate_int
 
 
 def add_vlan(args, vc):
-  def _add_vlan(vlan_id=None, vlan_name=None):
+  def _add_vlan(vlan_id=None, vlan_name=None, vlan_description=None):
     vlan = validate_int("Enter vlan id: ", 1, 4094, cli_input=vlan_id)
     vlan_name = validate_str("Enter vlan name: ", cli_input=vlan_name, default="vlan."+str(vlan))
+    vlan_descr = validate_str("Enter vlan description: ", cli_input=vlan_description, default="")
     vlan_yml = {
       'name': vlan_name,
-      'id': vlan
+      'id': vlan,
+      'description': vlan_descr
     }
     add_unique_vlan(vc['vlans'], vlan_yml)
     vc['vlans'] = sorted(vc['vlans'], key=lambda x: x['id'])
@@ -19,7 +21,7 @@ def add_vlan(args, vc):
       raise exceptions.UnEqualCorrespondingArgs("If providing both vlan_id and vlan_name arguments, "
                                                 "the number of ids and names must be equal")
     for idx, vlan_id in enumerate(args.vlan_id):
-      _add_vlan(vlan_id, args.vlan_name[idx])
+      _add_vlan(vlan_id, args.vlan_name[idx], args.vlan_description[idx])
   elif args.vlan_id:
     for vlan_id in args.vlan_id:
       _add_vlan(vlan_id)

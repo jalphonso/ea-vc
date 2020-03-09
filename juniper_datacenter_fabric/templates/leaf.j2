@@ -1,0 +1,46 @@
+#jinja2: lstrip_blocks: True, trim_blocks: True
+{% import "macros/junos.j2" as junos %}
+groups {
+{% call junos.stanza() %}
+FABRIC_UNDERLAY {
+    {% call junos.stanza() %}
+    {% include 'fabric_underlay/protocols.j2' %}
+    {% include 'fabric_underlay/policy_options.j2' %}
+    {% with interfaces = fabric_interfaces %}
+        {% include 'common/interfaces.j2' %}
+    {% endwith %}
+    {% endcall %}
+}
+FABRIC_OVERLAY {
+    {% call junos.stanza() %}
+    {% include 'fabric_overlay/protocols.j2' %}
+    {% include 'fabric_overlay/policy_options.j2' %}
+    {% include 'fabric_overlay/switch_options.j2' %}
+    {% with interfaces = overlay_interfaces %}
+        {% include 'common/interfaces.j2' %}
+    {% endwith %}
+    {% endcall %}
+}
+MGMT {
+    {% call junos.stanza() %}
+    {% include 'mgmt/system.j2' %}
+    {% include 'mgmt/routing_options.j2' %}
+    {% include 'mgmt/chassis.j2' %}
+    {% include 'mgmt/policy_options.j2' %}
+    {% include 'mgmt/protocols.j2' %}
+    {% with interfaces = mgmt_interface %}
+        {% include 'common/interfaces.j2' %}
+    {% endwith %}
+    {% with interfaces = loopback_interfaces %}
+        {% include 'common/interfaces.j2' %}
+    {% endwith %}
+    {% endcall %}
+}
+{% endcall %}
+}
+apply-groups [FABRIC_UNDERLAY FABRIC_OVERLAY MGMT];
+
+{% include 'common/vlans.j2' %}
+{% with interfaces = host_interfaces %}
+    {% include 'common/interfaces.j2' %}
+{% endwith %}

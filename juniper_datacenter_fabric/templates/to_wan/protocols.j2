@@ -1,0 +1,31 @@
+protocols {
+    bgp {
+        group WAN {
+            type external;
+            mtu-discovery;
+            import DEFAULT_ROUTE_ONLY;
+            family inet {
+                unicast;
+            }
+            export WAN_EXPORT;
+            local-as {{ local_asn }};
+            multipath {
+                multiple-as;
+            }
+            bfd-liveness-detection {
+                minimum-interval 500;
+                multiplier 3;
+                session-mode single-hop;
+            }
+            {% if wan_interfaces is defined and wan_interfaces %}
+                {% for neighbor in wan_interfaces %}
+                    {% if neighbor.wan.neighbor_ip is defined %}
+            neighbor {{ neighbor.wan.neighbor_ip}} {
+                peer-as {{ neighbor.wan.remote_as }};
+            }
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        }
+    }
+}

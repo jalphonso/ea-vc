@@ -1,11 +1,21 @@
 vlans {
+{% if vlans is defined and vlans %}
     {% for vlan in vlans %}
     {{ vlan.name }} {
-        vlan-id {{ vlan.id }};
+        {% if vlan.description is defined and
+            vlan.description %}
+        description "{{ vlan.description }}";
+        {% endif %}
+       vlan-id {{ vlan.id }};
+       {% if vlan.l3_interface is defined and 
+            vlan.l3_interface %}
+        l3-interface {{ vlan.l3_interface }};
+        {% endif %}
         vxlan {
             vni {{ 100000 + vlan.id }};
         }
     }
     {% endfor %}
+{% endif %}
 }
 

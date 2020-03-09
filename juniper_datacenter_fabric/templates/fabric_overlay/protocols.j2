@@ -1,0 +1,33 @@
+protocols {
+    bgp {
+        {% block protocols_bgp %}
+        group OVERLAY-CLIENT {
+            type internal;
+            mtu-discovery;
+            local-address {{ lo0_ip_cidr.split('/')[0] }};
+            family evpn {
+                signaling;
+            }
+            vpn-apply-export;
+        {% block cluster %} {% endblock %}
+            bfd-liveness-detection {
+                minimum-interval 1000;
+                multiplier 3;
+                session-mode automatic;
+            }
+            multipath;
+            {% for neighbor in fabric_interfaces %}
+                {% if neighbor.overlay.neighbor_ip is defined %}
+            neighbor {{ neighbor.overlay.neighbor_ip}};
+                {% endif %}
+            {% endfor %}
+        }
+        {% endblock %}
+    }
+    evpn {
+        encapsulation vxlan;
+        default-gateway no-gateway-community;
+        extended-vni-list all;
+    }
+}
+

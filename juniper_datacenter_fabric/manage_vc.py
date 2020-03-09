@@ -66,6 +66,9 @@ parser_vlan_add.add_argument('--vlan-id', dest='vlan_id', metavar='<vlan_id(s)>'
                              help='provide one or more vlan_id(s)')
 parser_vlan_add.add_argument('--vlan-name', dest='vlan_name', metavar='<vlan_name(s)>', nargs='+',
                              help='provide one or more vlan_name(s) (must have one for each vlan_id)')
+parser_vlan_add.add_argument('--vlan-description', dest='vlan_description', 
+                            metavar='<vlan_description(s)>', nargs='+', 
+                            help='provide description for vlan(s)')
 
 parser_vlan_delete.add_argument('--vlan-name', dest='vlan_name', metavar='<vlan_name>', nargs='+',
                                 help='provide one or more vlan_name(s)')

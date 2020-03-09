@@ -1,20 +1,7 @@
 chassis {
     aggregated-devices {
         ethernet {
-            device-count 50;
-        }
-    }
-    fpc 0 {
-        pic 0 {
-            port-range 0 43 {
-                channel-speed 25g;
-            }
-        }
-    }
-    alarm {
-        management-ethernet {
-            link-down ignore;
+            device-count {{ bundle_number }};
         }
     }
 }
-

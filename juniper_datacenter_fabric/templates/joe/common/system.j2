@@ -1,0 +1,37 @@
+system {
+    login {
+        user Lab {
+            uid 2000;
+            class super-user;
+            authentication {
+                encrypted-password {{ Lab_user_encrypted_pw }}; ## SECRET-DATA
+            }
+        }
+    }
+    root-authentication {
+        encrypted-password {{ root_user_encrypted_pw }}; ## SECRET-DATA
+    }
+    services {
+        ssh {
+            root-login allow;
+            protocol-version v2;
+        }
+        netconf {
+            ssh;
+        }
+    }
+    host-name {{ inventory_hostname }};
+    syslog {
+        user * {
+            any emergency;
+        }
+        file messages {
+            any notice;
+            authorization info;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+    }
+}
+

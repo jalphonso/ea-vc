@@ -1,0 +1,29 @@
+serial: XH3119370024
+image: jinstall-host-qfx-5e-x86-64-19.4R1.10-secure-signed.tgz
+lo0_ip_cidr: 10.255.255.110/32
+
+fabric_interfaces:
+  - description: U4002IJ-TCH
+    name: et-0/0/50
+    ip_cidr: 10.1.1.9/31
+    underlay:
+      neighbor_ip: 10.1.1.8
+    overlay:
+      neighbor_ip: 10.255.255.102
+  - description: U4003IJ-TCH
+    name: et-0/0/51
+    ip_cidr: 10.1.1.13/31
+    underlay:
+      neighbor_ip: 10.1.1.12
+    overlay:
+      neighbor_ip: 10.255.255.103
+
+mgmt_interface:
+  - description: Management
+    name: em0
+    ip_cidr: "{{ mgmt_ip_cidr }}"
+
+loopback_interfaces:
+  - description: Loopback
+    name: lo0
+    ip_cidr: "{{ lo0_ip_cidr }}"

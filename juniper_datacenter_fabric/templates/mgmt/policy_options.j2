@@ -1,0 +1,10 @@
+policy-options { 
+    policy-statement PFE-LB {
+        term DEFAULT {
+            then {
+                load-balance per-packet;
+            }
+        }
+    }
+}
+

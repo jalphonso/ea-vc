@@ -1,0 +1,17 @@
+policy-options {
+    policy-statement DISTRO_CLIENT_EXPORT {
+        term NEXT_HOP_SELF {
+            from {
+                protocol bgp;
+                route-filter 0.0.0.0/0 exact;
+            }
+            then {
+                next-hop self;
+                accept;
+            }
+        }
+        term DEFAULT {
+            then reject;
+        }
+    }
+}

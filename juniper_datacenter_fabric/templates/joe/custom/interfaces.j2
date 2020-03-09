@@ -1,0 +1,10 @@
+{% extends "common/interfaces.j2" %}
+{% block interfaces %}
+{{ super() }}
+    irb {
+        unit <*> {
+            proxy-macip-advertisement;
+            virtual-gateway-accept-data;
+        }
+    }
+{% endblock %}

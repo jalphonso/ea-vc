@@ -1,0 +1,87 @@
+interfaces {
+  {% block interfaces %}
+  {% for interface in interfaces %}
+    {% if interface.name.startswith('irb') %}
+    irb {
+    {% else %}
+    {{ interface.name }} {
+    {% endif %}
+      {% if interface.description is defined and interface.description %}
+        description "{{ interface.name }}: {{ interface.description }}";
+      {% endif %}
+      {% if interface.mtu is defined and interface.mtu %}
+        mtu {{ interface.mtu }};
+      {% endif %}
+      {% if interface.name.startswith('ae') and interface.lacp is defined %}
+      {% if interface.esi is defined and interface.esi %}
+        {% set x, ae = interface.name.split('ae') %}
+        {% set ae = '%02d' % ae|int %}
+        esi {
+            00:00:00:00:00:00:51:00:00:{{ ae }};
+            all-active;
+        }
+      {% endif %}
+        aggregated-ether-options {
+            lacp {
+            {% if interface.lacp.active is defined and interface.lacp.active %}
+                active;
+            {% else %}
+                passive;
+            {% endif %}
+            {% if interface.esi is defined and interface.esi %}
+                system-id 00:00:51:00:00:{{ ae }};
+            {% endif %}
+            }
+        }
+      {% endif %}
+      {% if interface.ae is defined and interface.ae|string %}
+        ether-options {
+            802.3ad ae{{ interface.ae }};
+        }
+      {% elif interface.name.startswith('irb') and interface.vgw_ip is defined %}
+        {% set irb, unit = interface.name.split('irb.') %}
+        {% set unit = unit|int %}
+        unit {{ unit }} {
+            family inet {
+                address {{ interface.ip_cidr|ipv4('cidr') }} {
+                  virtual-gateway-address {{ interface.vgw_ip|ipv4('address') }};
+                }
+            }
+        }
+      {% else %}
+        unit 0 {
+          {% if interface.ip_cidr is defined and interface.ip_cidr %}
+            family inet {
+                address {{ interface.ip_cidr|ipv4('cidr') }};
+            }
+          {% elif interface.vlan is defined and interface.vlan %}
+            {% if config_style == 'BRIDGE_DOMAIN' %}
+            family bridge {
+            {% else %}
+            family ethernet-switching {
+            {% endif %}
+              {% if interface.trunk %}
+                interface-mode trunk;
+              {% endif %}
+              {% if interface.vlan is iterable %}
+                {% set vlan_list = "[ " + interface.vlan | join(' ') + " ]" %}
+              {% endif %}
+              {% if config_style == 'BRIDGE_DOMAIN' %}
+                vlan-id-list {{ vlan_list }};
+              {% else %}
+                vlan {
+                    members {{ vlan_list }};
+                }
+              {% endif %}
+            }
+          {% endif %}
+          {% if interface.mpls is defined and interface.mpls %}
+            family mpls;
+          {% endif %}
+        }
+      {% endif %}
+    }
+  {% endfor %}
+  {% endblock %}
+}
+

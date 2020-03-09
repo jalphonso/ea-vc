@@ -1,0 +1,34 @@
+#jinja2: lstrip_blocks: True, trim_blocks: True
+
+{% if 'leaf' in group_names %}
+    replace:
+    {% include 'leaf/protocols.j2' %}
+    replace:
+    {% include 'leaf/policy_options.j2' %}
+    replace:
+    {% include 'common/vlans.j2' %}
+{% endif %}
+{% if 'spine' in group_names %}
+    replace:
+    {% include 'spine/protocols.j2' %}
+    replace:
+    {% include 'spine/policy_options.j2' %}
+    replace:
+    {% include 'spine/switch_options.j2' %}
+    replace:
+    {% include 'common/vlans.j2' %}
+    replace:
+    {% include 'common/forwarding_options.j2' %}
+{% endif %}
+{% if 'distro-router' in group_names %}
+    replace:
+    {% include 'distro-router/protocols.j2' %}
+    replace:
+    {% include 'distro-router/policy_options.j2' %}
+{% endif %}
+replace:
+{% include 'common/system.j2' %}
+replace:
+{% include 'common/interfaces.j2' %}
+{% include 'common/routing_options.j2' %}
+{% include 'common/chassis.j2' %}

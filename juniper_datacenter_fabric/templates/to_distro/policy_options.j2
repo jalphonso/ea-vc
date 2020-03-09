@@ -1,0 +1,23 @@
+policy-options {
+    prefix-list IRB_OUT {
+        apply-path "interfaces irb unit <*> family inet address <*>";
+    }
+    policy-statement DC_EXPORT {
+        term NO_UNDERLAY {
+            from {
+                protocol bgp;
+                community UNDERLAY;
+            }
+            then reject;
+        }
+        term IF_ROUTES {
+            from {
+                protocol direct;
+                prefix-list IRB_OUT;
+            }
+            then accept;
+        }
+    }
+    community UNDERLAY members {{ underlay_community }};
+}
+

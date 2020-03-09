@@ -1,0 +1,37 @@
+fabric_name: spine
+platform: QFX1002-72Q
+
+ztp_server_ip: 10.2.205.6
+ztp_group: ztp_group_10_2_205_6
+ztp_mgmt_ip: 192.168.254.220
+ztp_user: root
+subnets: 
+  - subnet_205
+
+all_spines:
+  - name: U402IJ-TCH
+    lo_ip: 10.255.255.102
+  - name: U4003IJ-TCH
+    lo_ip: 10.255.255.103
+
+vlans:
+  - name: MANAGEMENT
+    id: 2001
+    description: "Management VLAN for NSX-T"
+    l3_interface: irb.2001
+  - name: VMOTION
+    id: 2002
+    description: "vMotion VLAN for NSX-T"
+    l3_interface: irb.2002
+  - name: STORAGE
+    id: 2003
+    description: "Storage VLAN for NSX-T"
+    l3_interface: irb.2003
+  - name: NSX-TRANSPORT
+    id: 2004
+    description: "NSX-TRANSPORT VLAN for NSX-T in Leaf Group 3"
+    l3_interface: irb.2004
+  - name: NSX-TRANSPORT-EDGE
+    id: 2005
+    description: "ue900-t0edge-nsx-transport"
+    l3_interface: irb.2005

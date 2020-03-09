@@ -1,0 +1,30 @@
+routing-instances {
+  {% for routing_instance in routing_instances %}
+    {{ routing_instance.name }} {
+        instance-type vrf;
+      {% for interface in interfaces %}
+      {% if interface.routing_instance_name is defined and interface.routing_instance_name == routing_instance.name %}
+        interface {{ interface.name }}.0;
+      {% endif %}
+      {% endfor %}
+        route-distinguisher {{ interfaces|selectattr('name', 'equalto', 'lo0')|map(attribute='ip_cidr')|first|ipv4('address') }}:100;
+        vrf-target {{ routing_instance.target }};
+        vrf-table-label;
+        protocols {
+            bgp {
+                group {{ routing_instance.bgp.group }} {
+                    type external;
+                    local-address {{ routing_instance.bgp.local_address }};
+                    family inet {
+                        unicast;
+                    }
+                    neighbor {{ routing_instance.bgp.neighbor.ip }} {
+                        peer-as {{ routing_instance.bgp.neighbor.asn }};
+                    }
+                }
+            }
+        }
+    }
+  {% endfor %}
+}
+

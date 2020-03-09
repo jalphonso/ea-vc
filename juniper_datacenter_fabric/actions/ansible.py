@@ -34,9 +34,11 @@ def provision_ztp(args, vc):
   ztp_subnets = vc['subnets']
   ztp_group = vc['ztp_group']
   ztp_user = vc['ztp_user']
+  remote_python_interpreter = subprocess.run(['which', 'python3'], stdout=subprocess.PIPE).stdout.decode('utf-8')
   subprocess.call(['ansible-playbook', '-i', 'inventory/dc1/hosts.yml', '-i', f"{ztp_mgmt_ip},",
                    '-e', f"ztp_server={ztp_server}", '-e', f"ztp_group={ztp_group}",
                    '-e', "{ztp_subnets: %s}" % format(ztp_subnets),
+                   '-e', f"ansible_python_interpreter={remote_python_interpreter}",
                    '-e', f"inventory_dir={cwd}/inventory/dc1",
                    '-e', f"ztp_mgmt_ip={ztp_mgmt_ip}",
                    '-e', f"ztp_user={ztp_user}",

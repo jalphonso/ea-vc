@@ -1,0 +1,6 @@
+{% extends "common/protocols.j2" %}
+{% block protocols %}
+{{ super() }}
+    {% include "evpn/protocols/bgp.j2" %}
+    {% include "evpn/protocols/evpn.j2" %}
+{% endblock %}

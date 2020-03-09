@@ -1,0 +1,9 @@
+switch-options {
+    vtep-source-interface lo0.0;
+    route-distinguisher {{ switch_route_distinguisher }};
+    vrf-target {
+        target:{{ vrf_target_switch }};
+        auto;
+    }
+}
+

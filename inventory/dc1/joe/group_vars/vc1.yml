@@ -1,0 +1,48 @@
+---
+fabric_name: vc1
+ztp_server_ip: 192.168.105.6
+ztp_group: ztp_group_192_168_105_6
+subnets:
+  - subnet_105
+host_interfaces:
+  - name: ae0
+    description: Trunk to ESX127
+    esi: true
+    vlan:
+      - finance
+      - hr
+      - marketing
+    tag: ESX127
+    mtu: 9216
+    lacp:
+      active: true
+    trunk: true
+  - name: ae1
+    description: Trunk to ESX127
+    esi: true
+    vlan:
+      - finance
+      - hr
+      - marketing
+    tag: ESX113
+    mtu: 9216
+    lacp:
+      active: true
+    trunk: true
+  - name: et-0/0/48
+    description: ae0 member
+    tag: ESX127
+    ae: 0
+  - name: xe-0/0/0
+    description: ae1 member
+    tag: ESX113
+    ae: 1
+vlans:
+  - name: finance
+    id: 100
+  - name: hr
+    id: 200
+  - name: marketing
+    id: 999
+  - name: Sara
+    id: 4000

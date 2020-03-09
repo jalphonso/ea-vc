@@ -1,0 +1,33 @@
+forwarding-options {
+    storm-control-profiles default {
+        all;
+    }
+{% if overlay_interfaces is defined and overlay_interfaces %}
+    {% if dhcp_helper is defined and dhcp_helper %}
+    dhcp-relay {
+        maximum-hop-count 16;
+        server-group {
+            EA-DHCP-SERVERS {          
+            {% for server in dhcp_helper %}
+                {{ server.server }};
+            {% endfor%}
+            }
+        }
+        group NSX-NETWORKS {
+            active-server-group EA-DHCP-SERVERS;
+            forward-only;
+            {% for interface in overlay_interfaces %}
+                {% if interface.name == 'irb' %}
+                    {% for unit in interface.units %}
+                        {% if unit.dhcp_helper is defined and unit.dhcp_helper %}
+            interface irb.{{ unit.number }};
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        }
+    }
+    {% endif %}   
+{% endif %}
+}
+

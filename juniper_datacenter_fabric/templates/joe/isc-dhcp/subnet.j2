@@ -1,0 +1,10 @@
+{% for host in groups[item] %}
+pool {
+  allow members of "{{ hostvars[host]['serial'] }}";
+  range dynamic-bootp {{ hostvars[host]['mgmt_interface']|selectattr('name', 'equalto', 'em0')|map(attribute='ip_cidr')|first|ipv4('address') }};
+  option NEW_OP.transfer-mode "http";
+  option option-150 {{ hostvars[host]['ztp_server_ip'] }};
+  option NEW_OP.image-file-name "/junos/{{ hostvars[host]['image'] }}";
+  option NEW_OP.config-file-name "/config/{{ host }}.conf";
+}
+{% endfor %}
