@@ -1,0 +1,43 @@
+{% if interfaces is defined and interfaces %}
+    {% for interface in interfaces %}
+        {% set fpc = interface.name.split('/')[0].split('-')[1] %}
+        {% set pic = interface.name.split('/')[1] %}
+        {% set port = interface.name.split('/')[2] %}
+        {% if 'qfx5' in platform and 
+                (interface.speed == '25g' or interface.speed == '100g') %}
+            {% if '.25' in ( port|float / 4.0)|string %}
+                {% set temp =  (port|int - 1)|string %}
+            {% elif '.5' in ( port|float / 4.0)|string %}
+                {% set temp =  (port|int - 2)|string %}
+            {% elif '.75' in ( port|float / 4.0)|string %}
+                {% set temp =  (port|int - 3)|string %}
+            {% else %}
+                {% set temp =  port %}
+            {% endif%}
+            {% set port = temp %}
+chassis {
+    fpc {{ fpc }} { 
+        pic {{ pic }} {
+            port {{ port }} {
+                speed {{ interface.speed }};
+            }
+        }
+    }
+}
+        {% elif 'qfx10' in platform and interface.speed == '100g' %}
+            {% set port_list = ["1", "5", "7", "11", "13", "17", "19", "23", "25", "29", "31", "35", "37", "41", "43", "47", "49", "53", "55", "59", "61", "65", "67", "71"]  %}
+            {% if port in port_list %}
+chassis {
+    fpc {{ fpc }} { 
+        pic {{ pic }} {
+            port {{ port }} {
+                speed {{ interface.speed }};
+            }
+        }
+    }     
+}  
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+

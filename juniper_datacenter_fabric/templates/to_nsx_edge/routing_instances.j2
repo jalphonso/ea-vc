@@ -1,0 +1,11 @@
+routing-instances {
+    OVERLAY_VR {
+        {% call junos.stanza() %}
+        {% include 'to_nsx_edge/protocols.j2' %}
+        {% endcall %}
+        {% for interface in nsx_interface %}
+        interface {{ interface.name }};
+        {% endfor %}
+    }
+}
+

@@ -1,0 +1,26 @@
+forwarding-options {
+{% if overlay_interfaces is defined and overlay_interfaces %}
+    {% if dhcp_helper is defined and dhcp_helper %}
+    dhcp-relay {
+        maximum-hop-count 16;
+        server-group {
+            EA-DHCP-SERVERS {          
+            {% for server in dhcp_helper %}
+                {{ server.server }};
+            {% endfor%}
+            }
+        }
+        group NSX-NETWORKS {
+            active-server-group EA-DHCP-SERVERS;
+            forward-only;
+            {% for interface in overlay_interfaces %}
+                {% if interface.dhcp_helper is defined and interface.dhcp_helper %}
+            interface {{ interface.name }};
+                {% endif %}
+            {% endfor %}
+        }
+    }
+    {% endif %}   
+{% endif %}
+}
+

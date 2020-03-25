@@ -1,4 +1,5 @@
 *.retry
+*.sh
 *.diff
 *.log
 *.bak
@@ -16,3 +17,4 @@ __pycache__/
 venv/
 build/
 dist/
+inventory/

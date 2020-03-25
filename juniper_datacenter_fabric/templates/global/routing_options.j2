@@ -1,0 +1,7 @@
+routing-options {
+    generate {
+        {% for route in nsx_route_generate %}
+        route {{ route }} discard;
+        {% endfor %}
+    }
+}

@@ -1,0 +1,23 @@
+protocols {
+    bgp {
+        {% for interface in nsx_interface%}
+        group NSX_EDGE {
+            type external;
+            local-address {{ interface.ip_cidr.split('/')[0] }};
+            family inet {
+                unicast;
+            }
+            peer-as {{ nsx_asn }};
+            bfd-liveness-detection {
+                minimum-interval 1000;
+                multiplier 3;
+                session-mode automatic;
+            }
+            {% for neighbor in interface.neighbor %}
+            neighbor {{ neighbor }};
+            {% endfor %}
+        }
+        {% endfor %}
+    }
+}
+
