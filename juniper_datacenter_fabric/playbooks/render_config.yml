@@ -24,6 +24,9 @@
       template_path: ../templates/vc.j2
     when: "'vc' in group_names"
 
+  - name: validate port configuration
+    action: ValidatePorts
+
   - name: Build config from template
     template:
       src: "{{ template_path }}"

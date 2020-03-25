@@ -27,6 +27,7 @@
       commit: false
       port: "{{ netconf_port }}"
       timeout: "{{ device_timeout }}"
+      ignore_warning: [".* config will be applied to ports .*", "program requires >1 strings, so this is a placeholder"]
     register: pre_commit_result
 
   - name: proceed with config changes if needed
