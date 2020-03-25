@@ -50,7 +50,7 @@ def add_host(args, vc):
   def build_interface(interface_name=None, description=None):
     interface = validate_interface("Enter interface name: ", cli_input=interface_name)
     description = validate_str("Enter interface description: ", cli_input=description)
-    speed = validate_choice("Enter physical interface speed: ", cli_input=args.speed[0],
+    speed = validate_choice("Enter physical interface speed: ", cli_input=args.speed,
                       choices=["1g","10g","25g","40g","100g"])
     host_interface_yml = {
       'name': interface,

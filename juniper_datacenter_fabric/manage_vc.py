@@ -87,6 +87,9 @@ parser_host_add.add_argument('--vlan-name', dest='vlan_name', metavar='<vlan_nam
                              help='provide one or more vlan_name(s)')
 parser_host_add.add_argument('--int', dest='interface', metavar='<interface>', nargs='+',
                              help='provide one or more interface name(s)')
+parser_host_add.add_argument('--speed', dest='speed', metavar='<interface-speed>',
+                            choices=["1g","10g","25g","40g","100g"],
+                            help='provide physical interface speed')
 group_int_desc.add_argument('--int-desc', dest='interface_description', metavar='<interface_description>',
                             nargs='+', help='provide interface description')
 group_int_desc.add_argument('--no-int-desc', dest='interface_description', action='store_const',
