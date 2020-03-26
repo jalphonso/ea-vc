@@ -11,6 +11,9 @@
       config_path: "{{ inventory_dir }}/configs/{{ inventory_hostname }}.conf"
       template_path: ../templates/leaf.j2
 
+  - name: validate port configuration
+    action: ValidatePorts
+
   - name: Build config from template
     template:
       src: "{{ template_path }}"
