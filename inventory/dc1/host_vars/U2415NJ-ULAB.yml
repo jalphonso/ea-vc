@@ -1,0 +1,34 @@
+serial: XH3119370134
+image: jinstall-host-qfx-5e-x86-64-19.4R1.10-secure-signed.tgz
+
+mgmt_ip_cidr: 172.17.4.15/25
+lo0_ip_cidr: 172.30.40.15/32
+
+fabric_interfaces:
+  - description: U2402IJ-ULAB
+    name: et-0/0/48
+    ip_cidr: 172.30.41.25/31
+    underlay:
+      neighbor_ip: 172.30.41.24
+    overlay:
+      neighbor_ip: 172.30.40.2
+    speed: 40g
+  - description: U2403IJ-ULAB
+    name: et-0/0/49
+    ip_cidr: 172.30.41.153/31
+    underlay:
+      neighbor_ip: 172.30.41.152
+    overlay:
+      neighbor_ip: 172.30.40.3
+    speed: 40g
+
+mgmt_interface:
+  - description: Management
+    name: em0
+    ip_cidr: "{{ mgmt_ip_cidr }}"
+
+loopback_interfaces:
+  - description: Loopback
+    name: lo0
+    ip_cidr: "{{ lo0_ip_cidr }}"
+

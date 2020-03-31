@@ -1,0 +1,133 @@
+serial: EG885
+image: jinstall-host-qfx-10-f-x86-64-19.4R1.10-secure-signed.tgz
+
+mgmt_ip_cidr: 172.17.4.2/25
+lo0_ip_cidr: 172.30.40.2/32
+lo0_1_ip_cidr: "{{ lo0_ip_cidr }}"
+
+dc_interfaces:
+  - description: U2400DJ-ULAB
+    name: et-0/0/31
+    ip_cidr: 172.30.41.0/31
+    overlay:
+      neighbor_ip: 172.30.40.100
+    underlay:
+      neighbor_ip: 172.30.41.1
+    speed: 100g
+  - description: U2401DJ-ULAB
+    name: et-0/0/35
+    ip_cidr: 172.30.41.2/31
+    overlay:
+      neighbor_ip: 172.30.40.101
+    underlay:
+      neighbor_ip: 172.30.41.3
+    speed: 100g
+  
+fabric_interfaces:
+  - description: U2410NJ-ULAB
+    name: et-0/0/1
+    ip_cidr: 172.30.41.4/31
+    underlay:
+      neighbor_ip: 172.30.41.5
+    overlay:
+      neighbor_ip: 172.30.40.10
+    speed: 40g
+  - description: U2411NJ-ULAB
+    name: et-0/0/5
+    ip_cidr: 172.30.41.8/31
+    underlay:
+      neighbor_ip: 172.30.41.9
+    overlay:
+      neighbor_ip: 172.30.40.11
+    speed: 40g
+  - description: U2412NJ-ULAB
+    name: et-0/0/7
+    ip_cidr: 172.30.41.12/31
+    underlay:
+      neighbor_ip: 172.30.41.13
+    overlay:
+      neighbor_ip: 172.30.40.12
+    speed: 40g
+  - description: U2413NJ-ULAB
+    name: et-0/0/11
+    ip_cidr: 172.30.41.16/31
+    underlay:
+      neighbor_ip: 172.30.41.17
+    overlay:
+      neighbor_ip: 172.30.40.13
+    speed: 40g
+  - description: U2414NJ-ULAB
+    name: et-0/0/13
+    ip_cidr: 172.30.41.20/31
+    underlay:
+      neighbor_ip: 172.30.41.21
+    overlay:
+      neighbor_ip: 172.30.40.14
+    speed: 40g
+  - description: U2415NJ-ULAB
+    name: et-0/0/17
+    ip_cidr: 172.30.41.24/31
+    underlay:
+      neighbor_ip: 172.30.41.25
+    overlay:
+      neighbor_ip: 172.30.40.15
+    speed: 40g
+
+mgmt_interface:
+  - description: Management
+    name: em0
+    ip_cidr: "{{ mgmt_ip_cidr }}"
+
+loopback_interfaces:
+  - description: Loopback
+    name: lo0.0
+    ip_cidr: "{{ lo0_ip_cidr }}"
+  - description: Loopback for OVERLAY_VR
+    name: lo0.1
+    ip_cidr: "{{ lo0_1_ip_cidr }}"
+
+overlay_interfaces:
+  - name: irb.2001
+    description: "VCF Management"
+    ip_cidr: 172.18.170.2/24
+    vni_gw: 172.18.170.1
+    network: 172.18.170.0/24
+    dhcp_helper: true
+  - name: irb.2002
+    description: "vMotion"
+    ip_cidr: 172.18.169.130/25
+    vni_gw: 172.18.169.129
+    network: 172.18.169.128/25
+    dhcp_helper: true
+  - name: irb.2003
+    description: "vSAN"
+    ip_cidr: 172.18.171.2/25
+    vni_gw: 172.18.171.1
+    network: 172.18.171.0/25
+    dhcp_helper: true
+  - name: irb.2004
+    description: "NSX Transport"
+    ip_cidr: 172.18.171.130/25
+    vni_gw: 172.18.171.129
+    network: 172.18.171.128/25
+    dhcp_helper: true
+  - name: irb.2005
+    description: "ue900-t0edge-nsx-transport"
+    ip_cidr: 172.18.172.2/25
+    vni_gw: 172.18.172.1
+    network: 172.18.172.0/25
+    dhcp_helper: false
+
+nsx_interface:
+  - name: irb.2006
+    description: "NSX Edge"
+    ip_cidr: 172.17.2.57/29
+    neighbor:
+      - 172.17.2.58
+      - 172.17.2.59
+
+nsx_vlan:
+  name: NSX-NS-2006
+  id: 2006
+  description: "Path from NSX-T to WAN on VLAN 2006"
+  l3_interface: irb.2006

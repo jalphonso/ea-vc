@@ -1,0 +1,39 @@
+---
+all:
+  children:
+    lab:
+      children:
+        leaf:
+          children:
+            lg3:
+              hosts:
+                U4010NJ-TCH:
+                  ansible_host: 10.2.205.110
+                  serial_number: XH3119370024
+                U4011NJ-TCH:
+                  ansible_host: 10.2.205.111
+                  serial_number: XH3119370105
+        spine:
+          hosts:
+            U4002IJ-TCH:
+              ansible_host: 10.2.205.102
+              serial_number: DC064
+            U4003IJ-TCH:
+              ansible_host: 10.2.205.103
+              serial_number: DP449
+        distro_router:
+          hosts:
+            U4000DJ-TCH:
+              ansible_host: 10.2.205.100
+              serial_number: V2945
+            U4001DJ-TCH:
+              ansible_host: 10.2.205.101
+              serial_number: V2565
+    ztp_group_10_2_205_6:
+      children:
+        subnet_205:
+          hosts:
+            U4002IJ-TCH:
+            U4003IJ-TCH:
+            U4010NJ-TCH:
+            U4011NJ-TCH:

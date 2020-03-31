@@ -1,0 +1,51 @@
+mgmt_default_gw: 172.17.4.126
+
+Lab_user_encrypted_pw: "$6$zIKJNefJ$amwbrri1wHu5ME3WtL0tv6bOKt3U5u/VLEV3nDdGErC893RdHfQVs6DLIZEiIh3cIy8xEN7X8yaqjuY06gfD60"
+root_user_encrypted_pw: "$6$JNow/UvT$Tu5aPwN5pVPrJ8lEDNuXb/PrhFC9AqI/EAQfYQdizjH3asyfItiuyw7W6hVm0fj8PQ5rjKmnnzNQ8/yypcCuk0"
+netconf_port: "830"
+device_timeout: 60
+
+
+underlay_as_prefix: 420000
+local_asn: 65400
+nsx_asn: 65401
+underlay_community: "{{ local_asn }}:8578"
+overlay_community: "{{ local_asn }}:7986"
+route_route_distinguisher: "{{ lo0_ip_cidr.split('/')[0] }}:100"
+switch_route_distinguisher: "{{ lo0_ip_cidr.split('/')[0] }}:1"
+vrf_target_route: '{{ local_asn }}:10000'
+vrf_target_switch: "{{ local_asn }}:9999"
+
+bundle_number: 100
+
+# Juniper1
+# root_encrypted_password: "$6$mHyfNxFf$7BVK.RQPlobeoOTOrJ5JXz9l0vrSp/5vHrODN.hfqy.kVYjrvtya201p0Qz0WerAVbzRRx3/OVZIS/pxl1SiJ1"
+# Pa22word
+root_encrypted_password: "$6$WY9KeA6j$Re5y57dkwbXpMn1u.pEtBd8JLKm04.09vH7.9VWm8/ibOnvMUdIUht3LMDGJ4/bIDggdhlzF4npc./XraaM3Z1"
+SSH:
+  - ssh_user: stmorim
+    ssh_key: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC6oqhW1KdXJLAK7O/76LXOe8pmTSMAq5N+RJF26XrYTDZHH1+TnJJlruY39GSVs0MwQ0aUsCCo0Dgwqm5A0rZp8/jypAi30cPhRqGYbCGmYp4jjA8Riw2mORtJbEhbwZRAB1wbj3VpUzpktswIWUn/7X3hXXZoQ6fQZunizvNxUyoa9G7aUzYPfycbW3LwF51ZHeue5fi6HKylazraGeO+68NJJVpRE1iy7KlBePndxyL3YkrWA0HSz+YTGqVxBWjFsY5bI5XqkgDI4tlTfgfUcE+1QgOyf5LhS5PebaF+iWqhnZlN+RTRAWp6YEkLy31exrz2n8k+MKkzvNjjnjReQOZzetMPm+LeE6v3VSwN/kWVwhalI4sgy7VZulmuMkMKzLpHLXxZRNTHfJJLgDRjrLYBqKvw2tsc6Bi23m5lsdXSfMa6liHbm3dQxTUBloRBQ/qqlHdmTo1GRujx9C764QbiLjocHGy2w+g+Olk/5b0y0um69VlxlxNKGgOqKBM= sara@sara-VirtualBox'
+  - ssh_user: jalphonso
+    ssh_key: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6cJBeJmz5INckWhxcsRk7tol83BbcrrzOmwIQSSl7oiNHqiK+/enIPJDJHpMiwx86upHvaV4TuLTD7+WtulZSMHTEDJfmrNoJRWoiOlDEgMcqQbyY2cb10pktIfC4ukzXCXaMm0uX5dchbp+mh0Wa3AyiCN+11yf9Q61gDfQAxTbGjiXiIo4HbW0Myktq6zsx0+PazGA+XVu/m8Nh4/0zb8SiJ59z2Q6RYgUHiO8dZRB7JQSdQpWLkbEIlfyjzB8O/02RHogD28mZ9AGkUPz95O+OudukgWnftZzCLrzhy+iJ6U27EpC3MMymykFIexRA5VEqN2mnSjMkSrGAMA+5 jalphonso@jalphonso-mbp'
+  - ssh_user: remote
+    class: super-user-local
+  - ssh_user: greg
+    ssh_key: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCeaKfDBCRzksH+HItjuf4t/3Z2YRobPqgmscrqWORB/x9BMjS2RN2jv+X8S5qJYWy25cSlpDqEQnfa0+iwrGFml5o8NCQhmcDHcLtNmt9KKUQiIE6VKL1o89JVnzkOEUUox4YANha0OCt/qDMi3fPjgXMcNgR3DubR1q9jL3fmMi73JCu4jRwJifPIk+ZuzTztJoJcPfyzvMoa/IWZdaO4ACbVghSPW957/mMvoAmovKw8xJOo5xmdUN/M8NqHwvpwAfmuB0Zwh7d6MA65hc8bHAR8+Q5nruvgBA7k/0rbNW+oBxwhQHHZd0Uml0R0bzO7iHH4Y+dGtgHIKuMiJ2cB gbensimon@gbensimon-mbp'
+
+ntp_servers:
+  - 172.24.32.204
+  - 172.24.32.205
+dhcp_helper: 
+  - server: 172.24.26.38
+  - server: 172.24.26.49
+syslog_server:
+  - server: 192.168.244.12
+  - server:
+    port: 
+radius_server:
+  - server: 172.24.0.211
+    port: 1812
+  - server: 172.26.2.211
+    port: 1812
+
+radius_password: "$9$R4BErKMWx-bsvMDkPQ9CKM8Lxd"

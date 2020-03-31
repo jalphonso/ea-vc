@@ -1,0 +1,41 @@
+serial: V6730
+
+mgmt_ip_cidr: 172.17.4.101/25
+lo0_ip_cidr: 172.30.40.101/32
+
+dc_interfaces:
+  - description: U2402IJ-ULAB
+    name: et-0/0/0
+    ip_cidr: 172.30.41.3/31
+    underlay:
+      neighbor_ip: 172.30.41.2
+    overlay:
+      neighbor_ip: 172.30.40.2
+    speed: 100g
+  - description: U2403IJ-ULAB
+    name: et-0/0/1
+    ip_cidr: 172.30.41.131/31
+    underlay:
+      neighbor_ip: 172.30.41.130
+    overlay:
+      neighbor_ip: 172.30.40.3
+    speed: 100g
+
+wan_interfaces:
+  - description: U831DJ-ULAB
+    name: et-0/0/2
+    ip_cidr: 172.17.1.27/31
+    wan:
+      neighbor_ip: 172.17.1.26
+      remote_as: 65200
+    speed: 40g
+
+mgmt_interface:
+  - description: Management
+    name: fxp0
+    ip_cidr: "{{ mgmt_ip_cidr }}"
+
+loopback_interfaces:
+  - description: Loopback
+    name: lo0
+    ip_cidr: "{{ lo0_ip_cidr }}"
