@@ -1,12 +1,12 @@
 fabric_name: lg3
 platform: qfx5120-48y-8c
 
-ztp_server_ip: 172.18.162.68
-ztp_group: ztp_group_172_18_162_68
-ztp_mgmt_ip: 172.18.162.68
+ztp_server_ip: 172.18.162.69
+ztp_group: ztp_group_172_18_162_69
+ztp_mgmt_ip: 172.18.162.69
 ztp_user: root
 subnets: 
-  - subnet_205
+  - subnet_4
 
 host_interfaces:
   - name: xe-0/0/0

@@ -1,12 +1,12 @@
 fabric_name: distro_router
 platform: mx204
 
-ztp_server_ip: 172.18.162.68
-ztp_group: ztp_group_172_18_162_68
-ztp_mgmt_ip: 172.18.162.68
+ztp_server_ip: 172.18.162.69
+ztp_group: ztp_group_172_18_162_69
+ztp_mgmt_ip: 172.18.162.69
 ztp_user: root
 subnets: 
-  - subnet_205
+  - subnet_4
 
 nsx_route_generate:
   - 172.18.224.0/19
