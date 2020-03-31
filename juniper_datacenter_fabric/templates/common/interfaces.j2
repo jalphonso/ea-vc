@@ -2,8 +2,8 @@
 {% if interfaces is defined and interfaces %}
 interfaces {
     {% for interface in interfaces %}
-    {{ interface.name}} {
-        {% if interface.name.startswith('ge-') or
+    {{ interface.name }} {
+        {% if interface.name.startswith('ge-') or 
                 interface.name.startswith('xe-') or 
                 interface.name.startswith('et-') or 
                 interface.name.startswith('ae') %}
@@ -18,37 +18,24 @@ interfaces {
         {% if interface.description is defined and interface.description %}
         description "{{ interface.description }}";
         {% endif %}
-    {% if interface.name.startswith('irb') %}
-        {% for unit in interface.units %}
-        unit {{ unit.number }} {
-            {% if unit.description is defined and unit.description %}
-            description "{{ unit.description }}";
-            {% endif %}
-            {% if unit.gw is defined %}
-            family inet {
-                address {{ unit.ip_cidr }} {
-                    vrrp-group {{ unit.vrrp_group }} {
-                        virtual-address {{ unit.gw }};
-                        accept-data;
-                    }
+        {% if interface.vrrp_gw is defined %}
+        family inet {
+            address {{ interface.ip_cidr }} {
+                vrrp-group {{ interface.vrrp_group }} {
+                    virtual-address {{ interface.vrrp_gw }};
+                    accept-data;
                 }
             }
-            {% elif unit.vni_gw is defined %}
-            family inet {
-                address {{ unit.ip_cidr}} {
-                    virtual-gateway-address {{ unit.vni_gw }};
-                    preferred;
-                }
-            }
-            proxy-macip-advertisement;
-            virtual-gateway-accept-data;
-            {% else %}
-            family inet {
-                address {{ unit.ip_cidr }};
-            }
-            {% endif %}
         }
-        {% endfor %}
+        {% elif interface.vni_gw is defined %}
+        family inet {
+            address {{ interface.ip_cidr}} {
+                virtual-gateway-address {{ interface.vni_gw }};
+                preferred;
+            }
+        }
+        proxy-macip-advertisement;
+        virtual-gateway-accept-data;
     {% elif interface.bundle is defined %}
         ether-options {
             802.3ad {{ interface.bundle }};
@@ -67,14 +54,10 @@ interfaces {
                 }
             }
         }
-    {% elif interface.units is defined %}
-        {% for unit in interface.units %}
-        unit {{ unit.number }} {
-            family inet {
-                address {{ unit.ip_cidr }}
-            }
+    {% elif interface.ip_cidr is defined and '.' in interface.name %}
+        family inet {
+            address {{ interface.ip_cidr }};
         }
-        {% endfor %}
     {% elif interface.ip_cidr is defined %}
         unit 0 {
             family inet {

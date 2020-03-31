@@ -1,4 +1,12 @@
 fabric_name: lg1
+platform: qfx5120-48y-8c
+
+ztp_server_ip: 172.18.162.68
+ztp_group: ztp_group_172_18_162_68
+ztp_mgmt_ip: 172.18.162.68
+ztp_user: root
+subnets: 
+  - subnet_205
 
 host_interfaces:
 
@@ -14,7 +22,13 @@ vlans:
     description: "Storage VLAN for NSX-T"
   - name: NSX-TRANSPORT
     id: 2004
-    description: "NSX-TRANSPORT VLAN for NSX-T in Leaf Group 3"
+    description: "NSX-TRANSPORT VLAN for host to host communication"
   - name: NSX-TRANSPORT-EDGE
     id: 2005
     description: "ue900-t0edge-nsx-transport"
+  - name: NSX-NS-2006
+    id: 2006
+    description: "Path from NSX-T to WAN on VLAN 2006"
+  - name: NSX-NS-2007
+    id: 2007
+    description: "Path from NSX-T to WAN on VLAN 2007"

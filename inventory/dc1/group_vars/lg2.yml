@@ -1,6 +1,224 @@
 fabric_name: lg2
+platform: qfx5120-48y-8c
+
+ztp_server_ip: 172.18.162.68
+ztp_group: ztp_group_172_18_162_68
+ztp_mgmt_ip: 172.18.162.68
+ztp_user: root
+subnets: 
+  - subnet_205
 
 host_interfaces:
+  - name: et-0/0/0  
+    description: UNKNOWN
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue100
+    mtu: 9030
+    trunk: true
+    speed: 25g
+  - name: et-0/0/1
+    description: UNKNOWN
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue101
+    mtu: 9030
+    trunk: true
+    speed: 25g
+  - name: et-0/0/2
+    description: UNKNOWN
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue102
+    mtu: 9030
+    trunk: true
+    speed: 25g
+  - name: et-0/0/3
+    description: UNKNOWN
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue103
+    mtu: 9030
+    trunk: true
+    speed: 25g
+  - name: et-0/0/4
+    description: UNKNOWN
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue104
+    mtu: 9030
+    trunk: true
+    speed: 25g
+  - name: et-0/0/5
+    description: UNKNOWN
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue105
+    mtu: 9030
+    trunk: true
+    speed: 25g
+  - name: et-0/0/6
+    description: UNKNOWN
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue106
+    mtu: 9030
+    trunk: true
+    speed: 25g
+  - name: et-0/0/7
+    description: UNKNOWN
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue106
+    mtu: 9030
+    trunk: true
+    speed: 25g
+  - name: xe-0/0/8
+    description: UNKNOWN
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue108
+    mtu: 9030
+    trunk: true
+    speed: 10g
+  - name: xe-0/0/9
+    description: UNKNOWN
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue109
+    mtu: 9030
+    trunk: true
+    speed: 10g
+  - name: xe-0/0/10
+    description: UNKNOWN
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue110
+    mtu: 9030
+    trunk: true
+    speed: 10g
+  - name: xe-0/0/11
+    description: UNKNOWN
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue111
+    mtu: 9030
+    trunk: true
+    speed: 10g
+  - name: et-0/0/12
+    description: UNKNOWN
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue112
+    mtu: 9030
+    trunk: true
+    speed: 25g
+  - name: et-0/0/13
+    description: UNKNOWN
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue113
+    mtu: 9030
+    trunk: true
+    speed: 25g
+  - name: et-0/0/14
+    description: UNKNOWN
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue114
+    mtu: 9030
+    trunk: true
+    speed: 25g
 
 vlans:
   - name: MANAGEMENT
@@ -14,7 +232,13 @@ vlans:
     description: "Storage VLAN for NSX-T"
   - name: NSX-TRANSPORT
     id: 2004
-    description: "NSX-TRANSPORT VLAN for NSX-T in Leaf Group 3"
+    description: "NSX-TRANSPORT VLAN for host to host communication"
   - name: NSX-TRANSPORT-EDGE
     id: 2005
     description: "ue900-t0edge-nsx-transport"
+  - name: NSX-NS-2006
+    id: 2006
+    description: "Path from NSX-T to WAN on VLAN 2006"
+  - name: NSX-NS-2007
+    id: 2007
+    description: "Path from NSX-T to WAN on VLAN 2007"

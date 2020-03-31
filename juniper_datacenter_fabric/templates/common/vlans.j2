@@ -17,5 +17,18 @@ vlans {
     }
     {% endfor %}
 {% endif %}
+{% if nsx_vlan is defined and nsx_vlan %}
+    {{ nsx_vlan.name }} {
+        {% if nsx_vlan.description is defined and
+            nsx_vlan.description %}
+        description "{{ nsx_vlan.description }}";
+        {% endif %}
+        vlan-id {{ nsx_vlan.id }};
+        l3-interface {{ nsx_vlan.l3_interface }};
+        vxlan {
+            vni {{ 100000 + nsx_vlan.id }};
+        }
+    }
+{% endif %}
 }
 

@@ -1,4 +1,7 @@
 policy-options {
+    prefix-list NSX_CIDR_BLOCK {
+        apply-path "routing-options generate route <*>";
+    }
     policy-statement DEFAULT_ROUTE_ONLY {
         term 0/0 {
             from {
@@ -26,9 +29,17 @@ policy-options {
             }
             then accept;
         }
+        term FROM_NSX {
+            from {
+                protocol aggregate;
+                prefix-list NSX_CIDR_BLOCK;
+            }
+            then accept;
+        }
         term DEFAULT {
             then reject;
         }
     }
     as-path NULL "()";
+    as-path NSX {{nsx_asn }};
 }

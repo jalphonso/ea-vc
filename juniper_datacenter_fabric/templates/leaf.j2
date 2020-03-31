@@ -43,4 +43,8 @@ apply-groups [FABRIC_UNDERLAY FABRIC_OVERLAY MGMT];
 {% include 'common/vlans.j2' %}
 {% with interfaces = host_interfaces %}
     {% include 'common/interfaces.j2' %}
+    {% include 'global/chassis.j2' %}
+{% endwith %}
+{% with interfaces = fabric_interfaces %}
+    {% include 'global/chassis.j2' %}
 {% endwith %}

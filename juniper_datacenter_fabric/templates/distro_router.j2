@@ -38,3 +38,11 @@ MGMT {
 {% endcall %}
 }
 apply-groups [ TO_WAN TO_DATA_CENTER MGMT ];
+
+{% with interfaces = dc_interfaces %}
+    {% include 'global/chassis.j2' %}
+{% endwith %}
+{% with interfaces = wan_interfaces %}
+    {% include 'global/chassis.j2' %}
+{% endwith %}
+{% include 'global/routing_options.j2' %}

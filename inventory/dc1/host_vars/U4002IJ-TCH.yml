@@ -2,7 +2,7 @@ serial: DC064
 image: jinstall-host-qfx-10-f-x86-64-19.4R1.10-secure-signed.tgz
 
 lo0_ip_cidr: 10.255.255.102/32
-lo0_1_ip_cidr: 10.255.255.102/32
+lo0_1_ip_cidr: "{{ lo0_ip_cidr }}"
 
 dc_interfaces:
   - description: U4000DJ-TCH
@@ -12,6 +12,7 @@ dc_interfaces:
       neighbor_ip: 10.1.1.0
     overlay:
       neighbor_ip: 10.255.255.100
+    speed: 40g
   - description: U4001DJ-TCH
     name: et-0/0/7
     ip_cidr: 10.1.1.5/31
@@ -19,6 +20,7 @@ dc_interfaces:
       neighbor_ip: 10.1.1.4
     overlay:
       neighbor_ip: 10.255.255.101
+    speed: 40g
 
 fabric_interfaces:
   - description: U4010NJ-TCH
@@ -28,6 +30,7 @@ fabric_interfaces:
       neighbor_ip: 10.1.1.9
     overlay:
       neighbor_ip: 10.255.255.110
+    speed: 40g
   - description: U4011NJ-TCH
     name: et-0/0/1
     ip_cidr: 10.1.1.10/31
@@ -35,6 +38,7 @@ fabric_interfaces:
       neighbor_ip: 10.1.1.11 
     overlay:
       neighbor_ip: 10.255.255.111
+    speed: 40g
 
 mgmt_interface:
   - description: Management
@@ -43,46 +47,54 @@ mgmt_interface:
 
 loopback_interfaces:
   - description: Loopback
-    name: lo0
-    units:
-      - number: 0
-        ip_cidr: "{{ lo0_ip_cidr }}"
-      - number: 1
-        ip_cidr: "{{ lo0_1_ip_cidr }}"
+    name: lo0.0
+    ip_cidr: "{{ lo0_ip_cidr }}"
+  - description: Loopback for OVERLAY_VR
+    name: lo0.1
+    ip_cidr: "{{ lo0_1_ip_cidr }}"
 
 overlay_interfaces:
-  - description: IRB
-    name: irb
-    units:
-      - number: 2001
-        description: "VCF Management"
-        ip_cidr: 172.31.170.2/24
-        vni_gw: 172.31.170.1
-        network: 172.31.170.0/24
-        dhcp_helper: true
-      - number: 2002
-        description: "vMotion"
-        ip_cidr: 172.31.169.130/25
-        vni_gw: 172.31.169.129
-        network: 172.31.169.128/25
-        dhcp_helper: true
-      - number: 2003
-        description: "vSAN"
-        ip_cidr: 172.31.171.2/25
-        vni_gw: 172.31.171.1
-        network: 172.31.171.0/25
-        dhcp_helper: true
-      - number: 2004
-        description: "NSX Transport"
-        ip_cidr: 172.31.171.130/25
-        vni_gw: 172.31.171.129
-        network: 172.31.171.128/25
-        vrrp_group: 30
-        dhcp_helper: true
-      - number: 2005
-        description: "ue900-t0edge-nsx-transport"
-        ip_cidr: 172.31.172.2/25
-        vni_gw: 172.31.172.1
-        network: 172.31.172.0/25
-        vrrp_group: 30
-        dhcp_helper: false
+  - name: irb.2001
+    description: "VCF Management"
+    ip_cidr: 172.31.170.2/24
+    vni_gw: 172.31.170.1
+    network: 172.31.170.0/24
+    dhcp_helper: true
+  - name: irb.2002
+    description: "vMotion"
+    ip_cidr: 172.31.169.130/25
+    vni_gw: 172.31.169.129
+    network: 172.31.169.128/25
+    dhcp_helper: true
+  - name: irb.2003
+    description: "vSAN"
+    ip_cidr: 172.31.171.2/25
+    vni_gw: 172.31.171.1
+    network: 172.31.171.0/25
+    dhcp_helper: true
+  - name: irb.2004
+    description: "NSX Transport"
+    ip_cidr: 172.31.171.130/25
+    vni_gw: 172.31.171.129
+    network: 172.31.171.128/25
+    dhcp_helper: true
+  - name: irb.2005
+    description: "ue900-t0edge-nsx-transport"
+    ip_cidr: 172.31.172.2/25
+    vni_gw: 172.31.172.1
+    network: 172.31.172.0/25
+    dhcp_helper: false
+
+nsx_interface:
+  - name: irb.2006
+    description: "NSX Edge"
+    ip_cidr: 172.17.2.57/29
+    neighbor:
+      - 172.17.2.58
+      - 172.17.2.59
+
+nsx_vlan:
+  name: NSX-NS-2006
+  id: 2006
+  description: "Path from NSX-T to WAN on VLAN 2006"
+  l3_interface: irb.2006

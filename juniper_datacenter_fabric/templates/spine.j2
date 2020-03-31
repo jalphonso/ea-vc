@@ -19,7 +19,6 @@ FABRIC_OVERLAY {
     {% with interfaces = overlay_interfaces %}
         {% include 'common/interfaces.j2' %}
     {% endwith %}
-    {% include 'fabric_overlay/forwarding_options.j2' %}
     {% endcall %}
 }
 MGMT {
@@ -46,8 +45,22 @@ TO_DISTRO {
     {% endwith %}
     {% endcall %}
 }
+TO_NSX_EDGE {
+    {% call junos.stanza() %}
+    {% include 'to_nsx_edge/routing_instances.j2' %}
+    {% with interfaces = nsx_interface %}
+        {% include 'common/interfaces.j2' %}
+    {% endwith %}
+    {% endcall %}
+}
 {% endcall %}
 }
-apply-groups [FABRIC_UNDERLAY FABRIC_OVERLAY TO_DISTRO MGMT];
+apply-groups [FABRIC_UNDERLAY FABRIC_OVERLAY TO_DISTRO MGMT TO_NSX_EDGE];
 
 {% include 'common/vlans.j2' %}
+{% with interfaces = fabric_interfaces %}
+    {% include 'global/chassis.j2' %}
+{% endwith %}
+{% with interfaces = dc_interfaces %}
+    {% include 'global/chassis.j2' %}
+{% endwith %}

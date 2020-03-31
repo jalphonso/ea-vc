@@ -2,7 +2,7 @@ PROJECT=$(shell python3 setup.py --name)
 PROJECT_VERSION=$(shell python3 setup.py --version)
 SOURCEDIR=$(subst -,_,$(PROJECT))
 SOURCES=$(shell find $(SOURCEDIR) -name '*.py')
-APP_SERVER=ztp
+APP_SERVER=ea-app
 
 .PHONY: venv build install develop clean test
 

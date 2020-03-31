@@ -12,14 +12,11 @@ routing-instances {
         {% endif %}
         {% if overlay_interfaces is defined and overlay_interfaces %}
             {% for interface in overlay_interfaces %}
-                {% if interface.name == 'irb' %}
-                    {% for irb in interface.units %}
-        interface irb.{{ irb.number }};
-                    {% endfor %}
-                {% endif %}
+        interface {{ interface.name }};
             {% endfor %}
         {% endif %}  
         interface lo0.1;
+        {% include 'common/forwarding_options.j2' %}
     }
 }
 

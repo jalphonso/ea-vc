@@ -1,19 +1,10 @@
+{% if not 'distro_router' in group_names %}
 chassis {
-    {% if 'distro_router' in group_names %}
-    fpc 0 {
-        pic 0 {
-            pic-mode 40G;
-        }
-        pic 1 {
-            number-of-ports 0;
-        }
-    }
-    {% else %}
     aggregated-devices {
         ethernet {
             device-count {{ bundle_number }};
         }
     }
-    {% endif %}
 }
+{% endif %}
 
