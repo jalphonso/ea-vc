@@ -17,7 +17,7 @@ def add_host(args, vc):
   trunk = validate_bool("Is this host trunking Vlans? (y or n): ", default=True, cli_input=args.trunk)
   jumbo = validate_bool("Enable Jumbo Frames? (y or n): ", default=True, cli_input=args.jumbo)
   lag = validate_bool("Is this host using multiple interfaces in a lag? (y or n): ",
-                      default=True, cli_input=args.lag)
+                      default=False, cli_input=args.lag)
   if lag:
     ae = validate_int("Enter ae id for lag (bond): ", 0, 48, cli_input=args.ae)
     ae_description = validate_str("Enter ae interface description: ", cli_input=args.ae_description)
@@ -63,7 +63,7 @@ def add_host(args, vc):
     else:
       host_interface_yml['vlan'] = list(vlans)
       if jumbo:
-        host_interface_yml['mtu'] = 9216
+        host_interface_yml['mtu'] = 9030
       host_interface_yml['trunk'] = trunk
 
     add_unique_interface(vc['host_interfaces'], host_interface_yml)

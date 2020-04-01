@@ -25,6 +25,11 @@ def validate_bool(prompt, input_min=None, input_max=None, cli_input=None, defaul
     default = 'n'
   elif default is True:
     default = 'y'
+
+  if cli_input is False:
+      cli_input = 'n'
+  elif cli_input is True:
+      cli_input = 'y'
   prompt = _update_prompt(prompt, default)
   user_input = _check_input(prompt, cli_input, default)
 
