@@ -28,6 +28,12 @@ def add_unique_vlan(vlan_list, new_vlan):
       )
   vlan_list.append(new_vlan)
 
+def add_unique_snmp_user(user_list, new_user):
+    for d in user_list:
+        if d['user'] == new_user['user']:
+            user_list.remove(d)
+    user_list.append(new_user)
+     
 
 def host_is_unique_or_error(host_list, new_host, fabric):
   for d in host_list:

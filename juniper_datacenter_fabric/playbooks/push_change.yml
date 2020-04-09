@@ -9,7 +9,18 @@
   - set_fact:
       config_style: "VLAN_L2NG"
       config_path: "{{ inventory_dir }}/configs/{{ inventory_hostname }}.conf"
+  - set_fact:
       template_path: ../templates/leaf.j2
+    when: "'leaf' in group_names"
+  - set_fact:
+      template_path: ../templates/spine.j2
+    when: "'spine' in group_names"
+  - set_fact:
+      template_path: ../templates/distro_router.j2
+    when: "'distro_router' in group_names"
+  - set_fact:
+      template_path: ../templates/vc.j2
+    when: "'vc' in group_names"
 
   - name: validate port configuration
     action: ValidatePorts

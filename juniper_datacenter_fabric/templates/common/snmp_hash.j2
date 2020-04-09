@@ -1,0 +1,22 @@
+{% if snmp_encrypted is defined and snmp_encrypted %}
+{% for snmp in snmp_encrypted %}
+  set groups MGMT snmp v3 usm local-engine user {{ snmp.user }} authentication-sha authentication-key {{ snmp.auth_key }}
+  set groups MGMT snmp v3 usm local-engine user {{ snmp.user }} privacy-aes128 privacy-key {{ snmp.priv_key }}
+  set groups MGMT snmp v3 vacm security-to-group security-model usm security-name {{ snmp.user }} group SIT
+{% endfor %}
+{% endif %}
+  set groups MGMT snmp v3 vacm access group SIT default-context-prefix security-model usm security-level privacy read-view SIT
+{% if snmp_traps is defined and snmp_traps %}
+{% for target in snmp_traps %}
+  set groups MGMT snmp v3 target-address {{ target.name }} address {{ target.address }}
+  set groups MGMT snmp v3 target-address {{ target.name }} tag-list SNMPv3Traps
+  set groups MGMT snmp v3 target-address {{ target.name }} target-parameters SNMPv3
+{% endfor %}
+{% endif %}
+  set groups MGMT snmp v3 target-parameters SNMPv3 parameters message-processing-model v3
+  set groups MGMT snmp v3 target-parameters SNMPv3 parameters security-model usm
+  set groups MGMT snmp v3 target-parameters SNMPv3 parameters security-level privacy
+  set groups MGMT snmp v3 target-parameters SNMPv3 parameters security-name LABsnmpv3
+  set groups MGMT snmp v3 notify Notify_v3 type trap
+  set groups MGMT snmp v3 notify Notify_v3 tag SNMPv3Traps
+  set groups MGMT snmp view SIT oid .1 include

@@ -13,6 +13,7 @@ fabric_interfaces:
     overlay:
       neighbor_ip: 172.30.40.2
     speed: 40g
+    mtu: 9216
   - description: U2403IJ-ULAB
     name: et-0/0/49
     ip_cidr: 172.30.41.141/31
@@ -21,6 +22,7 @@ fabric_interfaces:
     overlay:
       neighbor_ip: 172.30.40.3
     speed: 40g
+    mtu: 9216
 
 mgmt_interface:
   - description: Management

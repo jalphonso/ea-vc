@@ -6,21 +6,23 @@ lo0_1_ip_cidr: "{{ lo0_ip_cidr }}"
 
 dc_interfaces:
   - description: U4000DJ-TCH
-    name: et-0/0/6
+    name: et-0/0/70
     ip_cidr: 10.1.1.1/31
     underlay:
       neighbor_ip: 10.1.1.0
     overlay:
       neighbor_ip: 10.255.255.100
     speed: 40g
+    mtu: 9216
   - description: U4001DJ-TCH
-    name: et-0/0/7
+    name: et-0/0/71
     ip_cidr: 10.1.1.5/31
     underlay:
       neighbor_ip: 10.1.1.4
     overlay:
       neighbor_ip: 10.255.255.101
     speed: 40g
+    mtu: 9216
 
 fabric_interfaces:
   - description: U4010NJ-TCH
@@ -31,6 +33,7 @@ fabric_interfaces:
     overlay:
       neighbor_ip: 10.255.255.110
     speed: 40g
+    mtu: 9216
   - description: U4011NJ-TCH
     name: et-0/0/1
     ip_cidr: 10.1.1.10/31
@@ -39,6 +42,25 @@ fabric_interfaces:
     overlay:
       neighbor_ip: 10.255.255.111
     speed: 40g
+    mtu: 9216
+  - description: U4012NJ-TCH
+    name: et-0/0/2
+    ip_cidr: 10.1.1.16/31
+    underlay:
+      neighbor_ip: 10.1.1.17
+    overlay:
+      neighbor_ip: 10.255.255.113
+    speed: 40g
+    mtu: 9216
+  - description: U4013NJ-TCH
+    name: et-0/0/3
+    ip_cidr: 10.1.1.20/31
+    underlay:
+      neighbor_ip: 10.1.1.21 
+    overlay:
+      neighbor_ip: 10.255.255.111
+    speed: 40g
+    mtu: 9216
 
 mgmt_interface:
   - description: Management
@@ -49,9 +71,9 @@ loopback_interfaces:
   - description: Loopback
     name: lo0.0
     ip_cidr: "{{ lo0_ip_cidr }}"
-  - description: Loopback for OVERLAY_VR
-    name: lo0.1
-    ip_cidr: "{{ lo0_1_ip_cidr }}"
+#  - description: Loopback for OVERLAY_VR
+#    name: lo0.1
+#    ip_cidr: "{{ lo0_1_ip_cidr }}"
 
 overlay_interfaces:
   - name: irb.2001

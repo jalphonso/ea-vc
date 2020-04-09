@@ -6,6 +6,7 @@ import ruamel.yaml
 from colorama import Fore, Style
 from juniper_datacenter_fabric.actions import ansible as ansible_actions
 from juniper_datacenter_fabric.actions import host as host_actions
+from juniper_datacenter_fabric.actions import snmp as snmp_actions
 from juniper_datacenter_fabric.actions import vlan as vlan_actions
 from juniper_datacenter_fabric.exceptions import exceptions
 from juniper_datacenter_fabric.utils.exit import exit
@@ -30,18 +31,21 @@ subparsers = parser.add_subparsers(help='choose one of the positional arguments'
 parser_vlan = subparsers.add_parser('vlan')
 parser_host = subparsers.add_parser('host')
 parser_ansible = subparsers.add_parser('ansible')
+parser_snmp = subparsers.add_parser('snmp')
 
 # 2nd level subparsers
 subparsers_vlan = parser_vlan.add_subparsers(help='choose one of the positional arguments', dest='{add,del}')
 subparsers_host = parser_host.add_subparsers(help='choose one of the positional arguments', dest='{add,del}')
 subparsers_ansible = parser_ansible.add_subparsers(
     help='choose one of the positional arguments', dest='{build,push,ztp}')
+subparsers_snmp = parser_snmp.add_subparsers(help='choose one of the positional arguments', dest='{init,get,push}')
 
 # required must be set to True and each subparser must have a dest to make sub commands mandatory
 subparsers.required = True
 subparsers_vlan.required = True
 subparsers_host.required = True
 subparsers_ansible.required = True
+subparsers_snmp.required = True
 
 # 3rd level parsers
 parser_vlan_add = subparsers_vlan.add_parser('add')
@@ -51,6 +55,9 @@ parser_host_delete = subparsers_host.add_parser('del')
 parser_ansible_build = subparsers_ansible.add_parser('build')
 parser_ansible_push = subparsers_ansible.add_parser('push')
 parser_ansible_ztp = subparsers_ansible.add_parser('ztp')
+parser_snmp_init = subparsers_snmp.add_parser('init')
+parser_snmp_push = subparsers_snmp.add_parser('push')
+parser_snmp_get = subparsers_snmp.add_parser('get')
 
 # Parser function associations (Sets function to be called per parser)
 parser_vlan_add.set_defaults(func=vlan_actions.add_vlan)
@@ -60,6 +67,9 @@ parser_host_delete.set_defaults(func=host_actions.delete_host)
 parser_ansible_build.set_defaults(func=ansible_actions.build_configs)
 parser_ansible_push.set_defaults(func=ansible_actions.push_change)
 parser_ansible_ztp.set_defaults(func=ansible_actions.provision_ztp)
+parser_snmp_init.set_defaults(func=snmp_actions.snmp_init)
+parser_snmp_push.set_defaults(func=snmp_actions.push_snmp_hash)
+parser_snmp_get.set_defaults(func=snmp_actions.get_snmp_hash)
 
 # 3rd level vlan parser arguments
 parser_vlan_add.add_argument('--vlan-id', dest='vlan_id', metavar='<vlan_id(s)>', nargs='+',
@@ -144,6 +154,27 @@ parser_ansible_push.add_argument('--pass', dest='passwd', metavar='<password>',
                                  help='specify network device password')
 parser_ansible_ztp.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
                                 help='specify fabric  name')
+
+# 3rd level snmp parser arguments
+parser_snmp_init.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
+                                 help='specify fabric  name')
+parser_snmp_init.add_argument('--user', dest='user', metavar='<username>',
+                                 help='specify network device username')
+parser_snmp_init.add_argument('--pass', dest='passwd', metavar='<password>',
+                                 help='specify network device password')
+parser_snmp_push.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
+                                 help='specify fabric  name')
+parser_snmp_push.add_argument('--user', dest='user', metavar='<username>',
+                                 help='specify network device username')
+parser_snmp_push.add_argument('--pass', dest='passwd', metavar='<password>',
+                                 help='specify network device password')
+parser_snmp_get.add_argument('--fabric', dest='fabric', metavar='<fabric name>',
+                                 help='specify fabric  name')
+parser_snmp_get.add_argument('--user', dest='user', metavar='<username>',
+                                 help='specify network device username')
+parser_snmp_get.add_argument('--pass', dest='passwd', metavar='<password>',
+                                 help='specify network device password')
+
 argcomplete.autocomplete(parser)
 args = parser.parse_args()
 

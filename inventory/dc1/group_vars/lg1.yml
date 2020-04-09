@@ -1,14 +1,56 @@
 fabric_name: lg1
 platform: qfx5120-48y-8c
 
-ztp_server_ip: 172.18.162.69
-ztp_group: ztp_group_172_18_162_69
-ztp_mgmt_ip: 172.18.162.69
+ztp_server_ip: 192.168.251.201
+ztp_group: ztp_group_10_2_205_6
+ztp_mgmt_ip: 192.168.251.201
 ztp_user: root
-subnets: 
-  - subnet_4
+subnets:
+  - subnet_205
 
 host_interfaces:
+  - name: xe-0/0/0
+    description: Host Simulator
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue100
+    mtu: 9030
+    trunk: true
+    speed: 10g
+  - name: xe-0/0/1
+    description: Host Simulator
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue101
+    mtu: 9030
+    trunk: true
+    speed: 10g
+  - name: xe-0/0/24
+    description: Host Simulator
+    vlan: 
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: ue101
+    mtu: 9030
+    trunk: true
+    speed: 10g
 
 vlans:
   - name: MANAGEMENT

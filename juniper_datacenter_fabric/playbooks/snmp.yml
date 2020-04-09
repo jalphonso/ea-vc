@@ -1,0 +1,127 @@
+---
+- hosts: "{{ fabric }}"
+  connection: local
+  gather_facts: no
+  roles:
+    - Juniper.junos
+
+  tasks:
+  - name: Set build path
+    set_fact:
+      build_path_pre: "{{ inventory_dir }}/build/{{ inventory_hostname }}_pre/"
+
+  - name: Create subdirectory for storing configs and diffs
+    file:
+      path: "{{ build_path_pre }}"
+      state: directory
+      mode: 0770
+
+  - name: create temporary file
+    tempfile:
+      state: file
+      suffix: .set
+    register: snmp_temp_file
+
+  - name: Build config snippet from template
+    template:
+      src: "../templates/common/{{snmp_template}}.j2"
+      dest: "{{ snmp_temp_file.path }}"
+
+  - name: Push SNMP config without committing so user can review
+    juniper_junos_config:
+      host: "{{ ansible_host }}"
+      load: set
+      src: "{{ snmp_temp_file.path }}"
+      dest_dir: "{{ build_path_pre }}"
+      diff: true
+      check: true
+      commit: false
+      port: "{{ netconf_port }}"
+      timeout: "{{ device_timeout }}"
+    register: juniper_junos_config_result
+
+  - name: Delete temporary file for security reasons
+    file:
+      path: "{{ snmp_temp_file.path }}"
+      state: absent
+
+  - block:
+      - name: "Nothing to upgrade"
+        debug:
+          msg: "Nothing to upgrade.  Ending play."
+
+      - meta: end_play
+    when: juniper_junos_config_result.diff_lines is not defined
+
+  - name: cat diffs_file
+    debug:
+      var: juniper_junos_config_result.diff_lines
+
+  - name: Pausing for user to review configuration changes for all hosts
+    pause:
+      prompt: "Please review configuration changes"
+      seconds: 20
+
+  - name: Set build path
+    set_fact:
+      build_path_post: "{{ inventory_dir }}/build/{{ inventory_hostname }}_post/"
+
+  - name: Create subdirectory for storing configs and diffs
+    file:
+      path: "{{ build_path_post }}"
+      state: directory
+      mode: 0770
+
+  - name: create temporary file
+    tempfile:
+      state: file
+      suffix: .set
+    register: snmp_temp_file
+
+  - name: Build config snippet from template
+    template:
+      src: "../templates/common/{{snmp_template}}.j2"
+      dest: "{{ snmp_temp_file.path }}"
+
+  - name: Push SNMP config with commit confirmed
+    juniper_junos_config:
+      host: "{{ ansible_host }}"
+      load: set
+      src: "{{ snmp_temp_file.path }}"
+      dest_dir: "{{ build_path_post }}"
+      diff: true
+      check: false
+      commit: true
+      confirmed: 10
+      port: "{{ netconf_port }}"
+      timeout: "{{ device_timeout }}"
+    register: juniper_junos_config_result
+
+  - name: Delete temporary file for security reasons
+    file:
+      path: "{{ snmp_temp_file.path }}"
+      state: absent
+
+  - name: checking diffs from pre and post commit
+    command: diff -I SECRET-DATA {{ build_path_pre }}/{{ ansible_ssh_host }}.diff {{ build_path_post }}/{{ ansible_ssh_host }}.diff
+    failed_when: "diff.rc > 0"
+    changed_when: False
+    register: diff
+
+  - name: Wait 10 seconds for port 22 to become open and contain "OpenSSH"
+    wait_for:
+      port: 22
+      host: "{{ ansible_host }}"
+      search_regex: OpenSSH
+      delay: 10
+      timeout: 30
+    connection: local
+
+  - name: Issuing secondary commit to finalize changes
+    juniper_junos_config:
+      host: "{{ ansible_host }}"
+      diff: false
+      check: true
+      commit: false
+      port: "{{ netconf_port }}"
+      timeout: "{{ device_timeout }}"

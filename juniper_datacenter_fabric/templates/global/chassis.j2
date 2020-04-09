@@ -37,6 +37,17 @@ chassis {
     }     
 }  
             {% endif %}
+        {% elif 'mx' in platform and interface.speed != '10g' %}
+chassis {
+    fpc 0 {
+        pic 0 {
+            pic-mode 40G;
+        }
+        pic 1 {
+            number-of-ports 0;
+        }
+    }
+}   
         {% endif %}
     {% endfor %}
 {% endif %}

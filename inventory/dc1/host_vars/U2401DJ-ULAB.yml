@@ -12,6 +12,7 @@ dc_interfaces:
     overlay:
       neighbor_ip: 172.30.40.2
     speed: 100g
+    mtu: 9216
   - description: U2403IJ-ULAB
     name: et-0/0/1
     ip_cidr: 172.30.41.131/31
@@ -20,6 +21,7 @@ dc_interfaces:
     overlay:
       neighbor_ip: 172.30.40.3
     speed: 100g
+    mtu: 9216
 
 wan_interfaces:
   - description: U831DJ-ULAB
@@ -29,6 +31,7 @@ wan_interfaces:
       neighbor_ip: 172.17.1.26
       remote_as: 65200
     speed: 40g
+    mtu: 9216
 
 mgmt_interface:
   - description: Management

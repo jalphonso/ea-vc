@@ -14,6 +14,7 @@ dc_interfaces:
     underlay:
       neighbor_ip: 172.30.41.1
     speed: 100g
+    mtu: 9216
   - description: U2401DJ-ULAB
     name: et-0/0/35
     ip_cidr: 172.30.41.2/31
@@ -22,6 +23,7 @@ dc_interfaces:
     underlay:
       neighbor_ip: 172.30.41.3
     speed: 100g
+    mtu: 9216
   
 fabric_interfaces:
   - description: U2410NJ-ULAB
@@ -32,6 +34,7 @@ fabric_interfaces:
     overlay:
       neighbor_ip: 172.30.40.10
     speed: 40g
+    mtu: 9216
   - description: U2411NJ-ULAB
     name: et-0/0/5
     ip_cidr: 172.30.41.8/31
@@ -40,6 +43,7 @@ fabric_interfaces:
     overlay:
       neighbor_ip: 172.30.40.11
     speed: 40g
+    mtu: 9216
   - description: U2412NJ-ULAB
     name: et-0/0/7
     ip_cidr: 172.30.41.12/31
@@ -48,6 +52,7 @@ fabric_interfaces:
     overlay:
       neighbor_ip: 172.30.40.12
     speed: 40g
+    mtu: 9216
   - description: U2413NJ-ULAB
     name: et-0/0/11
     ip_cidr: 172.30.41.16/31
@@ -56,6 +61,7 @@ fabric_interfaces:
     overlay:
       neighbor_ip: 172.30.40.13
     speed: 40g
+    mtu: 9216
   - description: U2414NJ-ULAB
     name: et-0/0/13
     ip_cidr: 172.30.41.20/31
@@ -64,6 +70,7 @@ fabric_interfaces:
     overlay:
       neighbor_ip: 172.30.40.14
     speed: 40g
+    mtu: 9216
   - description: U2415NJ-ULAB
     name: et-0/0/17
     ip_cidr: 172.30.41.24/31
@@ -72,6 +79,7 @@ fabric_interfaces:
     overlay:
       neighbor_ip: 172.30.40.15
     speed: 40g
+    mtu: 9216
 
 mgmt_interface:
   - description: Management

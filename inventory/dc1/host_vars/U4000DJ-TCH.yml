@@ -1,3 +1,6 @@
+---
+serial: V2945
+image: fake.image
 
 lo0_ip_cidr: 10.255.255.100/32
 
@@ -9,6 +12,7 @@ wan_interfaces:
       neighbor_ip: 10.55.55.1
       remote_as: 65200
     speed: 40g
+    mtu: 9216
 
 dc_interfaces:
   - description: U4002-TCH
@@ -19,6 +23,7 @@ dc_interfaces:
     overlay:
       neighbor_ip: 10.255.255.102
     speed: 40g
+    mtu: 9216
   - description: U4003-TCH
     name: et-0/0/1
     ip_cidr: 10.1.1.2/31
@@ -27,15 +32,19 @@ dc_interfaces:
     overlay:
       neighbor_ip: 10.255.255.103
     speed: 40g
+    mtu: 9216
 
 
 
 mgmt_interface:
   - description: Management
     name: fxp0
-    ip_cidr: "{{ mgmt_ip_cidr }}"
-
+    ip_cidr: '{{ mgmt_ip_cidr }}'
 loopback_interfaces:
   - description: Loopback
     name: lo0
-    ip_cidr: "{{ lo0_ip_cidr }}"
+    ip_cidr: '{{ lo0_ip_cidr }}'
+snmp_encrypted:
+  - user: LABsnmpv3
+    auth_key: '"$9$q.QFn/CpO13nvWXxdVqmPQ69tuO1hStpX7Vb2g5Qz36A0BISlKpuM8LxwsoJGiP5F39pO1AtKM8Xbw4aZDi.z36AuO5T6Au0hcYg4ZikTz3tpB6/KM"'
+    priv_key: '"$9$wusaZqmfn9AYgaUDHmPBIRcev8X7w24N-.PQF/98Xx-VYUjHmPQ7-wgJZkqTz36p0EhrvMXhceW8X-dbs2oDiHqmPTzdb"'

@@ -10,20 +10,6 @@ subnets:
   - subnet_4
 
 host_interfaces:
-  - name: ge-0/0/18
-    description: test host ex2200-c
-    vlan:
-      - MANAGEMENT
-      - STORAGE
-      - VMOTION
-      - NSX-TRANSPORT
-      - NSX-TRANSPORT-EDGE
-      - NSX-NS-2006
-      - NSX-NS-2007
-    tag: test-host
-    mtu: 9030
-    trunk: true
-    speed: 10g
   - name: xe-0/0/0
     description: vsvh-211-ue100
     vlan:
@@ -94,6 +80,21 @@ host_interfaces:
     mtu: 9030
     trunk: true
     speed: 10g
+  - name: ge-0/0/18
+    description: test host ex2200-c
+    vlan:
+      - MANAGEMENT
+      - STORAGE
+      - VMOTION
+      - NSX-TRANSPORT
+      - NSX-TRANSPORT-EDGE
+      - NSX-NS-2006
+      - NSX-NS-2007
+    tag: test-host
+    mtu: 9030
+    trunk: true
+    speed: 10g
+
 vlans:
   - name: MANAGEMENT
     id: 2001

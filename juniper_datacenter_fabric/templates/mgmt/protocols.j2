@@ -4,5 +4,30 @@ protocols {
         port-id-subtype interface-name;
         neighbour-port-info-display port-id;
     }
+    sflow {
+        sample-rate {
+            ingress 1000;
+            egress 1000;
+        }
+        source-ip {{ mgmt_ip_cidr.split('/')[0] }};
+        collector {{ sflow.collector }} {
+            udp-port {{ sflow.port }};
+        }
+        {% if fabric_interfaces is defined and fabric_interfaces %}
+            {% for interface in fabric_interfaces %}
+        interfaces {{ interface.name }};
+            {% endfor %}
+        {% endif %}
+        {% if dc_interfaces is defined and dc_interfaces %}
+            {% for interface in dc_interfaces %}
+        interfaces {{ interface.name }};
+            {% endfor %}
+        {% endif %}
+        {% if wan_interfaces is defined and wan_interfaces %}
+            {% for interface in wan_interfaces %}
+        interfaces {{ interface.name }};
+            {% endfor %}
+        {% endif %}
+    }
 }
 

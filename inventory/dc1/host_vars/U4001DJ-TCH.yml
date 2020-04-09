@@ -1,3 +1,6 @@
+serial: V2565
+image: fake.image
+
 lo0_ip_cidr: 10.255.255.101/32
 
 wan_interfaces:
@@ -8,6 +11,7 @@ wan_interfaces:
       neighbor_ip: 10.10.10.2
       remote_as: 65200
     speed: 40g
+    mtu: 9216
 
 dc_interfaces:
   - description: U4002-TCH
@@ -18,6 +22,7 @@ dc_interfaces:
     overlay:
       neighbor_ip: 10.255.255.102
     speed: 40g
+    mtu: 9216
   - description: U4003-TCH
     name: et-0/0/1
     ip_cidr: 10.1.1.6/31
@@ -26,6 +31,7 @@ dc_interfaces:
     overlay:
       neighbor_ip: 10.255.255.103
     speed: 40g
+    mtu: 9216
 
 
 mgmt_interface:
