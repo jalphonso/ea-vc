@@ -46,5 +46,5 @@ loopback_interfaces:
     ip_cidr: '{{ lo0_ip_cidr }}'
 snmp_encrypted:
   - user: LABsnmpv3
-    auth_key: '"$9$q.QFn/CpO13nvWXxdVqmPQ69tuO1hStpX7Vb2g5Qz36A0BISlKpuM8LxwsoJGiP5F39pO1AtKM8Xbw4aZDi.z36AuO5T6Au0hcYg4ZikTz3tpB6/KM"'
-    priv_key: '"$9$wusaZqmfn9AYgaUDHmPBIRcev8X7w24N-.PQF/98Xx-VYUjHmPQ7-wgJZkqTz36p0EhrvMXhceW8X-dbs2oDiHqmPTzdb"'
+    auth_key: '"$9$a/JHqQz6u0ICALxNdg436/tBIrlMLX-p0IcylLXHq.mFnO1ReM8rlgoJUHkIEhyvW-VwYoJXxk.fT3ntuORylevW7dbApX7NdsY4aZUDk5T36Ap3nM8"'
+    priv_key: '"$9$61nL/0BSyKx7VW8jHqmF3lKvL-V4oGji.X7VYgoji0B1IreNdbaGD4oFn/A0OVwsgZU.P5Qn/iHO1EcleLxNbgoaZUkmf8X"'

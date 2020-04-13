@@ -50,7 +50,7 @@
         debug:
           msg: "Nothing to upgrade.  Ending play."
 
-      - meta: end_play
+      - meta: end_host
     when: juniper_junos_config_result.diff_lines is not defined
 
   - name: cat diffs_file
@@ -103,7 +103,7 @@
       state: absent
 
   - name: checking diffs from pre and post commit
-    command: diff -I SECRET-DATA {{ build_path_pre }}/{{ ansible_ssh_host }}.diff {{ build_path_post }}/{{ ansible_ssh_host }}.diff
+    command: diff -I SECRET-DATA {{ build_path_pre }}/{{ inventory_hostname }}.diff {{ build_path_post }}/{{ inventory_hostname }}.diff
     failed_when: "diff.rc > 0"
     changed_when: False
     register: diff
