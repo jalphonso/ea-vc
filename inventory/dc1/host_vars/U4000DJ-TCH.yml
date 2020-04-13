@@ -46,5 +46,8 @@ loopback_interfaces:
     ip_cidr: '{{ lo0_ip_cidr }}'
 snmp_encrypted:
   - user: LABsnmpv3
-    auth_key: '"$9$C-zqA1RleW-dsXxk.P56/vW87bsJZjkqfNds4aZkq1REhKMVwYGjHJZ69Au1Is2gaDifTz39Aq.IESrvM7-VYaZGDim5QxNqmP5F3/Ctu0IyrvWxNvMjH"'
-    priv_key: '"$9$B8n1ylLX-2gJbwTz36u07-dsoJHkPTQnYgJDikTQyleKxN4aZqP5HkuO1EyrJGUimfn/CtO1QzreM87Ns24ZikqmfF69wY"'
+    auth_key: $9$C-zqA1RleW-dsXxk.P56/vW87bsJZjkqfNds4aZkq1REhKMVwYGjHJZ69Au1Is2gaDifTz39Aq.IESrvM7-VYaZGDim5QxNqmP5F3/Ctu0IyrvWxNvMjH
+    priv_key: $9$B8n1ylLX-2gJbwTz36u07-dsoJHkPTQnYgJDikTQyleKxN4aZqP5HkuO1EyrJGUimfn/CtO1QzreM87Ns24ZikqmfF69wY
+  - user: test
+    auth_key: $9$b3w4aqmfQz6YgfT3npuX7N-VY4aZH.P4on/9A0OVws4Ujq.5zn/goDkmfn6evMLX-bwg4ZUSraZDif5ylevX7s24Djqoa/CApRE24oJjHz36/tuGDHm
+    priv_key: $9$veFMxN4aZDjq8XZUHkTQcyrlK8xNd2oJx7k.mfzFKMWxbs4oGjk.X7wgaZkqO1IhclvMXxdbtuNdwYZGp0O1cyWLxws47N

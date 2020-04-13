@@ -78,7 +78,7 @@ def retrieve_snmp_hash(vc, username, passwd):
         # log in to device
         try:
             with Device(host=host, user=username, password=passwd) as dev:
-                config = dev.rpc.get_config(options={'format':'text'})
+                config = dev.rpc.get_config(options={'format':'json'})
         except ConnectAuthError as err:
             exit(f"Unable to login. Check username/password: {err}")
         except (ProbeError, ConnectError) as err:
@@ -86,26 +86,27 @@ def retrieve_snmp_hash(vc, username, passwd):
               f"'set system services netconf ssh' is set")
         except Exception as err:
             exit(f"Abnormal termination: {err.__class__.__name__, err}")
-
+        
         # Get SNMP user information and write to host_vars
-        lines = etree.tostring(config, encoding='unicode')
         try:
-            snmp_users = lines.split('snmp {')[1].split('local-engine')[1].split('vacm')[0]
-            for idx in range(0,snmp_users.count('user')):
-                user = snmp_users.split('user ')[idx+1].split(' ')[0]
-                auth_key = snmp_users.split('authentication-key ')[idx+1].split(';')[0]
-                priv_key = snmp_users.split('privacy-key ')[idx+1].split(';')[0]
-                snmp_user_yml = {
-                    'user': user,
-                    'auth_key': auth_key,
-                    'priv_key': priv_key
-                }
-                if 'snmp_encrypted' in host_vars:
-                    add_unique_snmp_user(host_vars['snmp_encrypted'], snmp_user_yml)
-                else:
-                    host_vars['snmp_encrypted'] = [snmp_user_yml]
-                    yaml.dump(host_vars, host_vars_file)
+            for mgmt in config['configuration']['groups']:
+                if mgmt.get('name') == 'MGMT':
+                    for snmp in mgmt['snmp']['v3']['usm']['local-engine']['user']:
+                        user = snmp['name']
+                        auth_key = snmp['authentication-sha']['authentication-key']
+                        priv_key = snmp['privacy-aes128']['privacy-key']
+                        snmp_user_yml = {
+                            'user': user,
+                            'auth_key': auth_key,
+                            'priv_key': priv_key 
+                        }
+
+                        if 'snmp_encrypted' in host_vars:
+                            add_unique_snmp_user(host_vars['snmp_encrypted'], snmp_user_yml)
+                        else:
+                            host_vars['snmp_encrypted'] = [snmp_user_yml]
+                            yaml.dump(host_vars, host_vars_file)
         except:
             print(f"No snmp users found on {host}")
-        yaml.dump(host_vars, host_vars_file)
 
+        yaml.dump(host_vars, host_vars_file)
