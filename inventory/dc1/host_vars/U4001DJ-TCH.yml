@@ -1,10 +1,11 @@
+---
 serial: V2565
 image: fake.image
 
 lo0_ip_cidr: 10.255.255.101/32
 
 wan_interfaces:
-  - description: "to WAN - fake"
+  - description: to WAN - fake
     name: et-0/0/2
     ip_cidr: 10.10.10.1/30
     wan:
@@ -37,9 +38,12 @@ dc_interfaces:
 mgmt_interface:
   - description: Management
     name: fxp0
-    ip_cidr: "{{ mgmt_ip_cidr }}"
-
+    ip_cidr: '{{ mgmt_ip_cidr }}'
 loopback_interfaces:
   - description: Loopback
     name: lo0
-    ip_cidr: "{{ lo0_ip_cidr }}"
+    ip_cidr: '{{ lo0_ip_cidr }}'
+snmp_encrypted:
+  - user: LABsnmpv3
+    auth_key: '"$9$3.uw6tuhSreM81IdbwYZGuOBIylX7-Vb2MWaZDif5hSylLxs24ZGiaJGi.mF369AtIESreWX7KvX-ws4on/9AO1SreWX7vMoJZUHkuOBEhrevW-bsvMX-"'
+    priv_key: '"$9$wEYaZqmfTFnjip0O1yrZUDiP5/Ctu0IF3cyev7NqmP569BIEyrvcSrvLXbwYgoaikmfT3/CQz/tOBEhs2goUjmfT3/CzF"'

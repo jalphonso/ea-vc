@@ -57,7 +57,7 @@ def push_snmp_hash(args,vc):
                 os.path.dirname(os.path.abspath(__file__)) + '/../playbooks/snmp.yml'],
                 env=env)
 
-def retrieve_snmp_hash(vc, user, passwd):
+def retrieve_snmp_hash(vc, username, passwd):
     yaml = ruamel.yaml.YAML()
     yaml.indent(sequence=4, offset=2)
     yaml.explicit_start = True
@@ -77,7 +77,7 @@ def retrieve_snmp_hash(vc, user, passwd):
 
         # log in to device
         try:
-            with Device(host=host, user=user, password=passwd) as dev:
+            with Device(host=host, user=username, password=passwd) as dev:
                 config = dev.rpc.get_config(options={'format':'text'})
         except ConnectAuthError as err:
             exit(f"Unable to login. Check username/password: {err}")

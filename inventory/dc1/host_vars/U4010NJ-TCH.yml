@@ -1,3 +1,4 @@
+---
 serial: XH3119370024
 image: jinstall-host-qfx-5e-x86-64-19.4R1.10-secure-signed.tgz
 
@@ -26,9 +27,8 @@ fabric_interfaces:
 mgmt_interface:
   - description: Management
     name: vme
-    ip_cidr: "{{ mgmt_ip_cidr }}"
-
+    ip_cidr: '{{ mgmt_ip_cidr }}'
 loopback_interfaces:
   - description: Loopback
     name: lo0
-    ip_cidr: "{{ lo0_ip_cidr }}"
+    ip_cidr: '{{ lo0_ip_cidr }}'

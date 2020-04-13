@@ -1,3 +1,4 @@
+---
 serial: XH3119370105
 image: jinstall-host-qfx-5e-x86-64-19.4R1.10-secure-signed.tgz
 
@@ -10,13 +11,13 @@ fabric_interfaces:
     underlay:
       neighbor_ip: 10.1.1.10
     overlay:
-      neighbor_ip: 10.255.255.102 
+      neighbor_ip: 10.255.255.102
     speed: 40g
     mtu: 9216
   - description: U4003IJ-TCH
     name: et-0/0/49
     ip_cidr: 10.1.1.15/31
-    underlay: 
+    underlay:
       neighbor_ip: 10.1.1.14
     overlay:
       neighbor_ip: 10.255.255.103
@@ -26,9 +27,8 @@ fabric_interfaces:
 mgmt_interface:
   - description: Management
     name: vme
-    ip_cidr: "{{ mgmt_ip_cidr }}"
-
+    ip_cidr: '{{ mgmt_ip_cidr }}'
 loopback_interfaces:
   - description: Loopback
     name: lo0
-    ip_cidr: "{{ lo0_ip_cidr }}"
+    ip_cidr: '{{ lo0_ip_cidr }}'

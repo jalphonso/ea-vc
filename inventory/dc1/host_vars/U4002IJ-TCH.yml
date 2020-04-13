@@ -1,9 +1,9 @@
+---
 serial: DC064
 image: jinstall-host-qfx-10-f-x86-64-19.4R1.10-secure-signed.tgz
 
 lo0_ip_cidr: 10.255.255.102/32
-lo0_1_ip_cidr: "{{ lo0_ip_cidr }}"
-
+lo0_1_ip_cidr: '{{ lo0_ip_cidr }}'
 dc_interfaces:
   - description: U4000DJ-TCH
     name: et-0/0/70
@@ -38,7 +38,7 @@ fabric_interfaces:
     name: et-0/0/1
     ip_cidr: 10.1.1.10/31
     underlay:
-      neighbor_ip: 10.1.1.11 
+      neighbor_ip: 10.1.1.11
     overlay:
       neighbor_ip: 10.255.255.111
     speed: 40g
@@ -56,7 +56,7 @@ fabric_interfaces:
     name: et-0/0/3
     ip_cidr: 10.1.1.20/31
     underlay:
-      neighbor_ip: 10.1.1.21 
+      neighbor_ip: 10.1.1.21
     overlay:
       neighbor_ip: 10.255.255.111
     speed: 40g
@@ -65,43 +65,42 @@ fabric_interfaces:
 mgmt_interface:
   - description: Management
     name: em0
-    ip_cidr: "{{ mgmt_ip_cidr }}"
-
+    ip_cidr: '{{ mgmt_ip_cidr }}'
 loopback_interfaces:
   - description: Loopback
     name: lo0.0
-    ip_cidr: "{{ lo0_ip_cidr }}"
+    ip_cidr: '{{ lo0_ip_cidr }}'
 #  - description: Loopback for OVERLAY_VR
 #    name: lo0.1
 #    ip_cidr: "{{ lo0_1_ip_cidr }}"
 
 overlay_interfaces:
   - name: irb.2001
-    description: "VCF Management"
+    description: VCF Management
     ip_cidr: 172.31.170.2/24
     vni_gw: 172.31.170.1
     network: 172.31.170.0/24
     dhcp_helper: true
   - name: irb.2002
-    description: "vMotion"
+    description: vMotion
     ip_cidr: 172.31.169.130/25
     vni_gw: 172.31.169.129
     network: 172.31.169.128/25
     dhcp_helper: true
   - name: irb.2003
-    description: "vSAN"
+    description: vSAN
     ip_cidr: 172.31.171.2/25
     vni_gw: 172.31.171.1
     network: 172.31.171.0/25
     dhcp_helper: true
   - name: irb.2004
-    description: "NSX Transport"
+    description: NSX Transport
     ip_cidr: 172.31.171.130/25
     vni_gw: 172.31.171.129
     network: 172.31.171.128/25
     dhcp_helper: true
   - name: irb.2005
-    description: "ue900-t0edge-nsx-transport"
+    description: ue900-t0edge-nsx-transport
     ip_cidr: 172.31.172.2/25
     vni_gw: 172.31.172.1
     network: 172.31.172.0/25
@@ -109,7 +108,7 @@ overlay_interfaces:
 
 nsx_interface:
   - name: irb.2006
-    description: "NSX Edge"
+    description: NSX Edge
     ip_cidr: 172.17.2.57/29
     neighbor:
       - 172.17.2.58
@@ -118,5 +117,5 @@ nsx_interface:
 nsx_vlan:
   name: NSX-NS-2006
   id: 2006
-  description: "Path from NSX-T to WAN on VLAN 2006"
+  description: Path from NSX-T to WAN on VLAN 2006
   l3_interface: irb.2006
